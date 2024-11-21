@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "youtube_agent"
+version = "0.1.0"
+description = ""
+authors = ["shailender chohan contact.ssc3@gmail.com"]
+readme = "README.md"
+packages = [
+    { include = "app" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+uvicorn = "^0.23.2"
+langserve = {extras = ["server"], version = ">=0.0.30"}
+pydantic = ">2,<3"
+langgraph = "^0.2.45"
+langgraph-sdk = "^0.1.35"
+langgraph-checkpoint-sqlite = "^2.0.1"
+langsmith = "^0.1.142"
+langchain-community = "^0.3.6"
+langchain-core = "^0.3.16"
+langchain-openai = "^0.2.7"
+notebook = "^7.2.2"
+tavily-python = "^0.5.0"
+wikipedia = "^1.4.0"
+langchain-aws = "^0.2.7"
+langchain-cli = "^0.0.31"
+poetry = "^1.8.4"
+google-api-python-client = "^2.153.0"
+youtube-transcript-api = "^0.6.2"
+python-dotenv = "^1.0.1"
+
+[tool.poetry.group.dev.dependencies]
+langchain-cli = ">=0.0.15"
+pytest = "^8.3.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
