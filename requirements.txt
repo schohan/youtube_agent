@@ -13,5 +13,4 @@ langchain-cli
 langserve 
 pydantic>=2,<3 
 poetry 
-
-
+python-dotenv

@@ -5,6 +5,7 @@ import os
 #load env variables from .evn file
 load_dotenv()
 
+@dataclass
 class Config:
     """
     Base configuration class. Contains configuration settings
@@ -21,3 +22,5 @@ class Config:
     processed_files_dir = os.environ.get("PROCESSED_FILES_DIR", "data/processed")
     test_files_dir = os.environ.get("TEST_FILES_DIR", "data/test")
     model_files_dir = os.environ.get("MODEL_FILES_DIR", "data/models")
+
+    use_test_data = os.environ.get("USE_TEST_DATA", True)

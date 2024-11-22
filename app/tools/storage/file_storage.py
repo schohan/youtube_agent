@@ -1,12 +1,12 @@
+from venv import logger
 from app.tools.storage.storage_interface import Storage
 from app.configs.app_config import Config
 import os
-import logging
 from app.configs.logging_config import get_logger
 
 class FileStorage(Storage):
     """
-    File storage class. Implments the Storage interface for file storage either local or mounted. 
+    File storage class. Implments the Storage interface to act on files stored in local/mounted file storage. 
     Items are stored with the filename as key. 
     """
     type = "local"    
@@ -79,6 +79,7 @@ class FileStorage(Storage):
                 value (str): The value to write to the file
         """
         file_path = os.path.join(self.directory, key)
+        logger.info(f"Saving contents to file {file_path} ")
         try:
             with open(file_path, 'w') as file:
                 file.write(value)

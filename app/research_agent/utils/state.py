@@ -11,4 +11,3 @@ class State(TypedDict):
     messages: Annotated[list, add_messages]
 
 
-graph_builder = StateGraph(State)

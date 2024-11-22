@@ -20,6 +20,6 @@ class StorageFactory:
         if storage_type == "local":            
             return FileStorage(root_location)
         elif storage_type == "s3":
-            return S3Storage(**attributes)
+            return S3Storage(root_location)
         else:
             raise ValueError("Invalid storage type")
