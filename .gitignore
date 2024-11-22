@@ -4,3 +4,4 @@ data/raw/
 data/processed/
 **/logs
 venv/
+app.log

@@ -1,6 +1,7 @@
 from app.research_agent.utils.nodes import graph
 from app.research_agent.utils.tools import search_youtube_videos
-import os
+from app.configs.app_config import Config
+# import os
 
 def get_youtube_videos(query: str):
     """
@@ -12,8 +13,11 @@ def get_youtube_videos(query: str):
     Returns:
         results (list): A list of dictionaries with video details
     """
-    api_key = os.environ.get("YOUTUBE_API_KEY")
-    max_results = int(os.environ.get("MAX_YOUTUBE_RESULTS", 10))
+
+    api_key = Config.youtube_api_key # os.environ.get("YOUTUBE_API_KEY")
+    max_results = Config.max_youtube_results # int(os.environ.get("MAX_YOUTUBE_RESULTS", 10))
+
+    print("Config.youtube_api_key " + api_key)
 
     results = search_youtube_videos(query, api_key, max_results=max_results)
     return results

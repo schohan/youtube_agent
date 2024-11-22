@@ -3,7 +3,7 @@
         "**/__pycache__": true,
         "**/.git": true,
         "**/.DS_Store": true,
-        "**/.vscode": true,
         "**/.pytest_cache": true,
+        "**/__init__.py": true,
     }
 }

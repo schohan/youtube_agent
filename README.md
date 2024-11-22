@@ -2,32 +2,23 @@
 
 ## Installation
 
-Install the LangChain CLI if you haven't yet
+Install poetry with pipx
 
 ```bash
-pip install -U langchain-cli
+pipx install poetry
 ```
+
+See [Installation Steps](https://python-poetry.org/docs/#installing-with-pipx)
 
 ## Adding packages
 
 ```bash
-# adding packages from 
-# https://github.com/langchain-ai/langchain/tree/master/templates
-langchain app add $PROJECT_NAME
+# create and activate a vitual env.
+python -m venv venv
+source venv/bin/activate (or use <venv>\Scripts\activate.bat for windows)
 
-# adding custom GitHub repo packages
-langchain app add --repo $OWNER/$REPO
-# or with whole git string (supports other git providers):
-# langchain app add git+https://github.com/hwchase17/chain-of-verification
-
-# with a custom api mount point (defaults to `/{package_name}`)
-langchain app add $PROJECT_NAME --api_path=/my/custom/path/rag
-```
-
-Note: you remove packages by their api path
-
-```bash
-langchain app remove my/custom/path/rag
+# in virtual environment, add packages from pyproject.toml
+poetry install
 ```
 
 ## Setup LangSmith (Optional)

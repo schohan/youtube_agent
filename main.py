@@ -1,12 +1,12 @@
 # Test driver for the app. Use this to run the app modules locally without running the server
-from dotenv import load_dotenv
-import os
-#load env variables from .evn file
-load_dotenv()
+# from dotenv import load_dotenv
+# import os
+# #load env variables from .evn file
+# load_dotenv()
 
 from app.research_agent.agent import get_youtube_videos
 from app.tools.youtube import Youtube
-
+from app.config.config import Config
 
 def search_youtube_videos_direct(search_term, api_key, max_results=10):
     """ 
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     """
     Test driver for the app. Use this to run the app modules locally without running the server.    
     """
-    key = os.environ.get("YOUTUBE_API_KEY")
+    key = Config.youtube_api_key #os.environ.get("YOUTUBE_API_KEY")
     if key:
         print("KEY " + key)
     else:

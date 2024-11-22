@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-
 class Storage(ABC):
     """
     Interface (abstract class) for storage i.e. file, database, cache etc
@@ -10,11 +9,11 @@ class Storage(ABC):
         pass
 
     @abstractmethod    
-    def has_item(self, key):
+    def has_item(self, key) -> bool:
         pass
 
     @abstractmethod    
-    def get(self, key):
+    def get(self, key) -> str | None:
         pass
     
     @abstractmethod    

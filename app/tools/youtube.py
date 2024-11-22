@@ -5,7 +5,7 @@ class Youtube:
     """
     A class to interact with the YouTube API
     """
-    
+
     @staticmethod
     def search_youtube_videos(search_term, api_key, max_results=10):
         """
@@ -72,6 +72,7 @@ class Youtube:
             
             # Append video details to list
             video_details.append({
+                'id': video_id,
                 'title': video_title,
                 'views': view_count,
                 'thumbnail': video_thumbnail,
