@@ -8,7 +8,7 @@ from app.research_agent.agent import get_youtube_videos
 from app.tools.content.youtube import Youtube
 from app.configs.app_config import Config
 from app.tools.storage.file_storage import FileStorage
-from app.tools.storage.json_helper import JsonHelper
+from app.tools.data_converters.json_helper import JsonHelper
 
 def search_youtube_videos_direct(search_term, api_key, max_results=10):
     """ 

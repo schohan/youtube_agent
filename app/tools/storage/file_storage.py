@@ -3,6 +3,7 @@ from app.tools.storage.storage_interface import Storage
 from app.configs.app_config import Config
 import os
 from app.configs.logging_config import get_logger
+from pathlib import Path
 
 class FileStorage(Storage):
     """
@@ -100,3 +101,27 @@ class FileStorage(Storage):
             os.remove(file_path)
         else:
             raise FileNotFoundError(f"The file {key} does not exist in the directory {self.directory}")
+        
+    def iterate_and_process_items(self, location=".",  filter_pattern="*", processor_func=lambda x: print(x)):
+        """
+            Iterate over all files in the storage directory and process them.
+            This is a placeholder method and should be implemented based on the processing logic.
+            Args:
+                processor_func (function): The function to process the file
+                directory (str): The directory to iterate over
+                file_filter (str): The file filter to apply
+            Returns:
+                None
+        """
+        directory_path = Path(location)
+        logger.info(" --- > Iterating over directory_path " + directory_path.name + " with filter " + filter_pattern)
+
+        for file in directory_path.rglob(filter_pattern):
+            if file.is_file():   # Check if it's a file
+                logger.info(f"Found file: {file.name}")
+                
+                # Process the file (e.g., read or modify it)
+                with file.open('r') as f:
+                    # content = f.read()
+                    processor_func(file.name)  # Example of processing
+    

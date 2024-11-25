@@ -9,7 +9,7 @@ class S3Storage(Storage):
     """
     type = "s3"
     logger = get_logger(__name__)
-    
+
     def __init__(self, bucket_name: str):
 
         pass
@@ -26,4 +26,7 @@ class S3Storage(Storage):
         pass
     
     def delete(self, key):
+        pass
+
+    def iterate_and_process_items(self, location, filter_pattern, processor_func):
         pass

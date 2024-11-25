@@ -52,7 +52,10 @@ def test_get():
         assert len(data) > 0, "Expected data to have at least one item"
         assert "title" in data[0], "Expected data to have a title"
         assert "description" in data[0], "Expected data to have a description"
-        assert "views" in data[0], "Expected data to have a view count"
+        assert "viewCount" in data[0], "Expected result to have a view count"
+        assert "likeCount" in data[0], "Expected result to have a like count"
+        assert "favoriteCount" in data[0], "Expected result to have a favorite count"
+        assert "commentCount" in data[0], "Expected result to have a comment count"
         assert "thumbnails" in data[0], "Expected data to have thumbnails list"
         assert "captions" in data[0], "Expected data to have a captions list"
         assert "transcript" in data[0], "Expected data to have a transcript"
@@ -68,4 +71,9 @@ def test_delete():
     logger.info("Deleted test data from file")
 
 
+def test_iterate_and_process_files():
+    test_files_dir = test_files_dir = os.path.join(Config.project_root, Config.test_files_dir)      
+    storage = StorageFactory.get_storage("local", test_files_dir)
 
+    storage.iterate_and_process_items(location=test_files_dir, filter_pattern="*.json", processor_func=lambda file: logger.info("Processing file: " + file))
+    logger.info("Processed all files in storage")

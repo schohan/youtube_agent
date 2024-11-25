@@ -1,10 +1,10 @@
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
-
+from app.configs.app_config import Config
 from app.research_agent.utils.state import State
 
-llm = ChatOpenAI(model="gpt-4o", temperature=0) 
+llm = ChatOpenAI(model=Config.model_name, temperature=0) 
 
 def chatbot(state: State):
     return {"messages": [llm.invoke(state["messages"])]}

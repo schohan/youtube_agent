@@ -1,9 +1,12 @@
+from curses import raw
 from app.research_agent.utils.nodes import graph
 from app.research_agent.utils.tools import search_youtube_videos
 from app.configs.app_config import Config
+from pathlib import Path
+
 # import os
 
-def get_youtube_videos(query: str):
+def download_youtube_videos(query: str):
     """
     Get youtube videos based on a query
 
@@ -23,12 +26,39 @@ def get_youtube_videos(query: str):
     return results
 
 
+def process_raw_videos():
+    """
+    Process raw downloaded youtube videos from configured raw video location. Processing involves:
+     a. Summarizing videos using transcript
+     b. Save processed objects along with metadata to storage for use by application
 
-def stream_graph_updates(user_input: str):
-    for event in graph.stream({"messages": [("user", user_input)]}):
-        for value in event.values():
-            print("Assistant:", value["messages"][-1].content)
-            return value["messages"][-1].content
+    Args:
+        None
+
+    Returns:
+        None
+    """
+    # 
+    # process all files in the given directory. Use supplied functions to process the files
+    directory_path = Path(Config.raw_files_dir )
+    for file in directory_path.iterdir():
+        if file.is_file():   # Check if it's a file
+            print(f"Processing file: {file.name}")
+            
+            # Process the file (e.g., read or modify it)
+            with file.open('r') as f:
+                content = f.read()
+                print(content)  # Example of processing
+    
 
 
-#get_youtube_videos("asthma treatments")
+
+
+# def stream_graph_updates(user_input: str):
+#     for event in graph.stream({"messages": [("user", user_input)]}):
+#         for value in event.values():
+#             print("Assistant:", value["messages"][-1].content)
+#             return value["messages"][-1].content
+
+
+#download_youtube_videos("asthma treatments")

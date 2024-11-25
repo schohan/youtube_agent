@@ -10,14 +10,17 @@ class Config:
     """
     Base configuration class. Contains configuration settings
     """
+
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 
     youtube_api_key = os.environ.get("YOUTUBE_API_KEY", "")
     max_youtube_results = int(os.environ.get("MAX_YOUTUBE_RESULTS", 10))
     
+    model_name = os.environ.get("MODEL_NAME", "gpt-4o")
     open_api_key = os.environ.get("OPENAI_API_KEY", "")
     tavily_api_key = os.environ.get("TAVILY_API_KEY", "")
     
+    storage_type = os.environ.get("STORAGE_TYPE", "local")
     raw_files_dir = os.environ.get("RAW_FILES_DIR", "data/raw")
     processed_files_dir = os.environ.get("PROCESSED_FILES_DIR", "data/processed")
     test_files_dir = os.environ.get("TEST_FILES_DIR", "data/test")
