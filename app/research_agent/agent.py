@@ -40,15 +40,7 @@ def process_raw_videos():
     """
     # 
     # process all files in the given directory. Use supplied functions to process the files
-    directory_path = Path(Config.raw_files_dir )
-    for file in directory_path.iterdir():
-        if file.is_file():   # Check if it's a file
-            print(f"Processing file: {file.name}")
-            
-            # Process the file (e.g., read or modify it)
-            with file.open('r') as f:
-                content = f.read()
-                print(content)  # Example of processing
+    # TODO: Implement this function  
     
 
 

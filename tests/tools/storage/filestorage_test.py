@@ -71,7 +71,7 @@ def test_delete():
     logger.info("Deleted test data from file")
 
 
-def test_iterate_and_process_files():
+def test_iterate_and_process_items():
     test_files_dir = test_files_dir = os.path.join(Config.project_root, Config.test_files_dir)      
     storage = StorageFactory.get_storage("local", test_files_dir)
 

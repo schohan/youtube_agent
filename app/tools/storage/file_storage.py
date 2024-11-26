@@ -102,6 +102,8 @@ class FileStorage(Storage):
         else:
             raise FileNotFoundError(f"The file {key} does not exist in the directory {self.directory}")
         
+    
+    # overrides the iterate_and_process_items method in the Storage class    
     def iterate_and_process_items(self, location=".",  filter_pattern="*", processor_func=lambda x: print(x)):
         """
             Iterate over all files in the storage directory and process them.
@@ -114,14 +116,14 @@ class FileStorage(Storage):
                 None
         """
         directory_path = Path(location)
-        logger.info(" --- > Iterating over directory_path " + directory_path.name + " with filter " + filter_pattern)
+        self.logger.info(" --- > Iterating over directory_path " + directory_path.name + " with filter " + filter_pattern)
 
         for file in directory_path.rglob(filter_pattern):
             if file.is_file():   # Check if it's a file
-                logger.info(f"Found file: {file.name}")
+                self.logger.info(f"Found file: {file.name}")
                 
                 # Process the file (e.g., read or modify it)
                 with file.open('r') as f:
-                    # content = f.read()
-                    processor_func(file.name)  # Example of processing
+                    content = f.read()
+                    processor_func(content)  
     

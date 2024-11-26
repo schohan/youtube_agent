@@ -1,4 +1,5 @@
-# youtube_agent
+# youtube_agent (WORK IN PROGRESS)
+This codebase is actively being worked on and is not complete yet.
 
 ## Installation
 
@@ -48,10 +49,10 @@ This project folder includes a Dockerfile that allows you to easily build and ho
 To build the image, you simply:
 
 ```shell
-docker build . -t my-langserve-app
+docker build . -t youtube-agent-app
 ```
 
-If you tag your image with something other than `my-langserve-app`,
+If you tag your image with something other than `youtube-agent-app`,
 note it for use in the next step.
 
 ### Running the Image Locally
@@ -66,5 +67,5 @@ variable with the value set in my local environment
 We also expose port 8080 with the `-p 8080:8080` option.
 
 ```shell
-docker run -e OPENAI_API_KEY=$OPENAI_API_KEY -p 8080:8080 my-langserve-app
+docker run -e OPENAI_API_KEY=$OPENAI_API_KEY -p 8080:8080 youtube-agent-app
 ```
