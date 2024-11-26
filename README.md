@@ -1,5 +1,21 @@
-# youtube_agent (WORK IN PROGRESS)
-This codebase is actively being worked on and is not complete yet.
+# Youtube Agent (WORK IN PROGRESS)
+> NOTE: This code is actively being worked on and is not finished for use yet.
+
+## Overview
+
+Youtube agent finds videos for given topics using Youtube API. 
+For each video in the result set, it generates content summary and store it along with the metadata for consumption by an API or application.
+
+Extracted metadata includes video title, published date, view count, comment counts, transcript, captions, and more.
+
+## Purpose 
+
+This agent is a TL;DR for the Youtube videos. It generates summaries of the youtube videos to be consumed by applications.
+
+There can be thousands of Youtube videos for a given topic and even though Youtube has its own algorithm to bubble up the best ones to the top, it is still difficult to watch all of the videos unless one has hours of time to spare.  
+
+Applications built on top of this agent can help pinpoint the videos relevant to your needs. 
+
 
 ## Installation
 
