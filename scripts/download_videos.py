@@ -4,7 +4,7 @@
 # #load env variables from .evn file
 # load_dotenv()
 import os
-from app.research_agent.agent import get_youtube_videos
+from app.research_agent.agent import download_youtube_videos
 from app.tools.content.youtube import Youtube
 from app.configs.app_config import Config
 from app.tools.storage.file_storage import FileStorage
@@ -33,7 +33,7 @@ if __name__ == "__main__":
         print("KEY " + key)
     else:
         print("YOUTUBE_API_KEY not found in environment variables")
-    results = search_youtube_videos_direct("asthma treatments", key, 1)
+    results = download_youtube_videos("asthma treatments", key, 1)
     print(results)
     storage = FileStorage(os.path.join(Config.project_root, Config.test_files_dir))
     storage.set("youtube_results-temp.json", JsonHelper.list_to_str(results))

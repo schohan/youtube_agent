@@ -2,11 +2,14 @@
 name = "youtube_agent"
 version = "0.1.0"
 description = ""
-authors = ["shailender chohan contact.ssc3@gmail.com"]
+authors = ["shailender chohan <contact.ssc3@gmail.com>"]
 readme = "README.md"
 packages = [
     { include = "app" },
 ]
+
+[tool.poetry.scripts]
+draw = "scripts.draw_agent_flow:main"
 
 [tool.poetry.dependencies]
 python = "^3.11"

@@ -44,8 +44,6 @@ def process_raw_videos():
     
 
 
-
-
 # def stream_graph_updates(user_input: str):
 #     for event in graph.stream({"messages": [("user", user_input)]}):
 #         for value in event.values():
@@ -54,3 +52,5 @@ def process_raw_videos():
 
 
 #download_youtube_videos("asthma treatments")
+
+graph.stream({"messages": [("user", "asthma treatments")]})

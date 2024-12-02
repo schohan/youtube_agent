@@ -16,7 +16,11 @@ class Config:
     youtube_api_key = os.environ.get("YOUTUBE_API_KEY", "")
     max_youtube_results = int(os.environ.get("MAX_YOUTUBE_RESULTS", 10))
     
-    model_name = os.environ.get("MODEL_NAME", "gpt-4o")
+    
+    #model and its properties
+    model_name = os.environ.get("MODEL_NAME", "gpt-4o") 
+    model_temperature = float(os.environ.get("MODEL_TEMPERATURE", 0.1))
+
     open_api_key = os.environ.get("OPENAI_API_KEY", "")
     tavily_api_key = os.environ.get("TAVILY_API_KEY", "")
     
@@ -27,3 +31,5 @@ class Config:
     model_files_dir = os.environ.get("MODEL_FILES_DIR", "data/models")
 
     use_test_data = os.environ.get("USE_TEST_DATA", True)
+
+    # local_llm_url = os.environ.get("LOCAL_LLM_URL", "http://localhost:8000")
