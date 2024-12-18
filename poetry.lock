@@ -2248,6 +2248,23 @@ aiosqlite = ">=0.20.0,<0.21.0"
 langgraph-checkpoint = ">=2.0.2,<3.0.0"
 
 [[package]]
+name = "langgraph-cli"
+version = "0.1.61"
+description = "CLI for interacting with LangGraph API"
+optional = false
+python-versions = "<4.0.0,>=3.9.0"
+files = [
+    {file = "langgraph_cli-0.1.61-py3-none-any.whl", hash = "sha256:f66e3e11c30c1bf049fc7e83e1944f9ac1e8b427b5987858b094df1f974a5857"},
+    {file = "langgraph_cli-0.1.61.tar.gz", hash = "sha256:373bba9c297408afb84ffb19df868b49c23390195bb0029cb6f8945f8a202eca"},
+]
+
+[package.dependencies]
+click = ">=8.1.7,<9.0.0"
+
+[package.extras]
+inmem = ["langgraph-api (>=0.0.6,<0.1.0)", "python-dotenv (>=0.8.0)"]
+
+[[package]]
 name = "langgraph-sdk"
 version = "0.1.40"
 description = "SDK for interacting with LangGraph API"
@@ -5125,4 +5142,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "bcf669714fa6befe49506076fc23c269673fb8ffe174fee45ca5f28a685a35d3"
+content-hash = "d0ce2f81334b94e045eef41e3fe25418882fdada771368a5b8259566cd822da4"

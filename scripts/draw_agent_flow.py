@@ -5,7 +5,7 @@ import sys
 
 # Add the root directory of the project to sys.path
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
-from app.research_agent.utils.nodes import graph
+from app.research_agent.agent import app
 
 
 
@@ -20,7 +20,7 @@ def draw_agent_flow(file_path: str = "docs/agent_flow_graph.png"):
         None
     """
     try:
-        graph_image = graph.get_graph().draw_mermaid_png()
+        graph_image = app.get_graph().draw_mermaid_png()
         with open(file_path, "wb") as f:
             f.write(graph_image)
 

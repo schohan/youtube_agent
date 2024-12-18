@@ -5,3 +5,4 @@ data/processed/
 **/logs
 venv/
 app.log
+.langgraph_*

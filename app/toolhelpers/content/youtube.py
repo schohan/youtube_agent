@@ -1,4 +1,5 @@
 from datetime import date
+from venv import logger
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi
 from dataclasses import dataclass
@@ -53,14 +54,15 @@ class Youtube:
         video_details = []
         
         for item in response['items']:
-            print(item)
+            logger.info(item)
 
+            thumbnails = item['snippet'].get('thumbnails', {})
             snippet = YoutubeSnippet(
                 videoId=item['id']['videoId'],
                 publishedAt=item['snippet']['publishedAt'],
                 title=item['snippet']['title'],
                 description=item['snippet']['description'],
-                thumbnails=item['snippet']['thumbnails'],
+                thumbnails=thumbnails,
                 captions=[],
                 transcript=""
             ) 

@@ -1,5 +1,5 @@
 from venv import logger
-from app.tools.storage.storage_interface import Storage
+from app.toolhelpers.storage.storage_interface import Storage
 from app.configs.app_config import Config
 from app.configs.logging_config import get_logger
 

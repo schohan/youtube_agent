@@ -10,6 +10,7 @@ packages = [
 
 [tool.poetry.scripts]
 draw = "scripts.draw_agent_flow:main"
+dev = "server.py"
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -32,6 +33,7 @@ poetry = "^1.8.4"
 google-api-python-client = "^2.153.0"
 youtube-transcript-api = "^0.6.2"
 python-dotenv = "^1.0.1"
+langgraph-cli = "^0.1.61"
 
 [tool.poetry.group.dev.dependencies]
 langchain-cli = ">=0.0.15"
