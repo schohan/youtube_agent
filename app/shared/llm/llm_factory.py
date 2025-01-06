@@ -1,4 +1,4 @@
-from app.configs.settings import Config
+from app.configs.settings import Settings
 
 
 class LLMFactory:
@@ -16,8 +16,8 @@ class LLMFactory:
         Returns:
             Langchain llm object (see BaseChatModel for details): An subclass of BaseChatModel 
         """
-        if llm == Config.llm_openai:
+        if llm == Settings.llm_openai:
             from langchain_openai import ChatOpenAI
-            return ChatOpenAI(model=Config.openai_model_name, temperature=Config.openai_model_temperature) 
+            return ChatOpenAI(model=Settings.openai_model_name, temperature=Settings.openai_model_temperature) 
         else:
             raise ValueError("Invalid model name")         

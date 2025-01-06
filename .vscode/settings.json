@@ -7,8 +7,12 @@
         "**/__init__.py": false,
     },
     "python.testing.pytestArgs": [
-        "tests"
+        "app"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        ".",
+        "-s"
+    ]
 }

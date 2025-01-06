@@ -1,8 +1,0 @@
-{
-  "python_version": "3.11",
-  "dependencies": ["langchain_openai", "."],
-  "graphs": {
-    "youtube_graph": "./app/research_agent/agent.py:get_and_process_youtube_videos"
-  },
-  "env": "./.env"
-}

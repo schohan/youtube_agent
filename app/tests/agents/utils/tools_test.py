@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import sys
 from app.configs.logging_config import get_logger
-from app.configs.settings import Config
+from app.configs.settings import Settings
 
 # Ensure the PYTHONPATH environment variable is set to the parent directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
@@ -13,7 +13,7 @@ logger = get_logger(__name__)
 # Load environment variables from .env file
 load_dotenv()
 
-from app.research_agent.utils.tools import search_youtube_videos 
+from app.agents.utils.tools import search_youtube_videos 
 from app.toolhelpers.storage.file_storage import FileStorage
 from app.toolhelpers.storage.storage_interface import Storage
 from app.toolhelpers.storage.storage_factory import StorageFactory

@@ -87,4 +87,6 @@ docker run -e OPENAI_API_KEY=$OPENAI_API_KEY -p 8080:8080 youtube-agent-app
 ```
 
 ### Run tests
+pytest --log-cli-level=DEBUG <test-file-or-dir>
+
 

@@ -1,8 +1,8 @@
-from app.toolhelpers.llm.llm_interface import LLM
+from app.shared.llm.llm_interface import LLM
 from typing import Any
 
 from langchain_openai import ChatOpenAI
-from app.configs.settings import Config
+from app.configs.settings import Settings
 
 
 class OpenAILLM(LLM):
@@ -11,7 +11,7 @@ class OpenAILLM(LLM):
     """
 
     def __init__(self, **kwargs):
-        self.llm = ChatOpenAI(model=Config.model_name, temperature=Config.model_temperature) 
+        self.llm = ChatOpenAI(model=Settings.openai_model_name, temperature=Settings.openai_model_temperature) 
 
     def invoke(self, input) -> Any:
         return self.llm.invoke(input)

@@ -1,3 +1,4 @@
+from calendar import c
 from dataclasses import dataclass
 from dotenv import load_dotenv
 import os
@@ -22,10 +23,15 @@ class Settings:
 
     openai_model_name = os.environ.get("MODEL_NAME", "gpt-4o") 
     openai_model_temperature = float(os.environ.get("MODEL_TEMPERATURE", 0.1))
+    openai_max_tokens = int(os.environ.get("MODEL_MAX_TOKENS", 1000))
+    openai_top_p = float(os.environ.get("MODEL_TOP_P", 1.0))
+
+    claude_api_key = os.environ.get("CLAUDE_API_KEY", "")
+    claude_url = os.environ.get("CLAUDE_URL", "")
+    claude_model_name = os.environ.get("CLAUDE_MODEL_NAME", "claude=3.5")
 
     # api keys and related props  
     openai_api_key = os.environ.get("OPENAI_API_KEY", "")
-    claude_api_key = os.environ.get("CLAUDE_API_KEY", "")
     tavily_api_key = os.environ.get("TAVILY_API_KEY", "")
     youtube_api_key = os.environ.get("YOUTUBE_API_KEY", "")
     max_youtube_results = int(os.environ.get("MAX_YOUTUBE_RESULTS", 10))
