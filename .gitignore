@@ -7,3 +7,4 @@ venv/
 .venv/
 app.log
 .langgraph_*
+.DS_Store
