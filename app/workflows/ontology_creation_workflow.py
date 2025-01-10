@@ -11,7 +11,7 @@ from typing import Any
 import uuid
 import os
 from app.configs.settings import Settings
-
+from langchain_core.runnables import RunnableConfig
 
 settings = Settings()
 
@@ -26,18 +26,20 @@ async def ontology_node(state: ResearchedState) -> ResearchedState:
     print(f"ontology_node: Ontology extraction result==>>> {res}")
     return res
    
-
-async def main():
+async def create_graph():
     graph = StateGraph(ResearchedState)
     graph.add_node('ontology_extractor', ontology_node)
     graph.add_edge(START, 'ontology_extractor')
     graph.add_edge('ontology_extractor', END)
 
     app = graph.compile()
+    return app
 
 
-    config = {"configurable": {"thread_id": str(uuid.uuid4())}}
-    input_message =  "health" # input("Enter your topic for keyword extraction: ")  
+async def main():
+    app = await create_graph()
+    config = RunnableConfig(metadata={"thread_id": str(uuid.uuid4())})
+    input_message =  input("Enter your topic for keyword extraction: ")  
 
     state = ResearchedState(input=input_message)
 

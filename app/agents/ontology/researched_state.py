@@ -1,21 +1,8 @@
 from pydantic import BaseModel
 from typing import Optional
 import json
+from .topic_ontology import TopicOntology
 
-class MindMapNode(BaseModel):
-    title: str
-    children: Optional[list['MindMapNode']] = None
-
-    def to_dict(self):
-        return {
-            "title": self.title,
-            "children": [child.to_dict() for child in self.children] if self.children else None
-        }
-
-class Curriculum(BaseModel):
-    title: str
-    description: str
-    keywords: list[MindMapNode]
 
 
 class ResearchedState(BaseModel):
@@ -26,7 +13,7 @@ class ResearchedState(BaseModel):
         keywords (List[MindMapNode]): The keywords stored as category > subcategory > children. For example, "Programming" > [ "Python" > ["Django", "Flask"]]
     """          
     input: str
-    curriculum: Curriculum = Curriculum(title="", description="", keywords=[])
+    curriculum: TopicOntology = TopicOntology(title="", description="", topics=[])
     is_reviewed: bool = False
     error: str = ""
     success: bool = False
@@ -38,7 +25,7 @@ class ResearchedState(BaseModel):
     def to_dict(self):
         return {
             "input": self.input,
-            "curriculum": [keyword.to_dict() for keyword in self.curriculum.keywords],
+            "curriculum": [keyword.to_dict() for keyword in self.curriculum.topics],
             "is_reviewed": self.is_reviewed,
             "error": self.error,
             "success": self.success
@@ -47,7 +34,7 @@ class ResearchedState(BaseModel):
     def to_json(self):
         return {
             "input": self.input,
-            "keywords": json.dumps([keyword.to_dict() for keyword in self.curriculum.keywords], indent=3),
+            "keywords": json.dumps([keyword.to_dict() for keyword in self.curriculum.topics], indent=3),
             "is_reviewed": self.is_reviewed,
             "error": self.error,
             "success": self.success

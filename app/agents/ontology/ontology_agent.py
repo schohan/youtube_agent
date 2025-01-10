@@ -1,12 +1,27 @@
 
 from typing import List, Any, Optional
 from logging import getLogger
+from venv import logger
 
 from app.agents.base import BaseAgent
 from app.configs.settings import Settings
-from app.agents.ontology.researched_state import ResearchedState, MindMapNode, Curriculum
+from app.agents.ontology.researched_state import ResearchedState
+from app.agents.ontology.topic_ontology import TopicNode, TopicOntology
 from app.shared.llm.llm_factory import LLMFactory
 
+
+# Web Development
+# ├── Frontend Development
+# │   ├── HTML & CSS Basics
+# │   ├── JavaScript
+# │   │   ├── Syntax and Variables
+# │   │   ├── DOM Manipulation
+# │   │   └── Async Programming
+# │   └── Frameworks
+# ├── Backend Development
+# │   ├── Databases
+# │   ├── APIs
+# │   └── Server-side Languages
 
 
 class OntologyAgent(BaseAgent):
@@ -38,7 +53,7 @@ class OntologyAgent(BaseAgent):
         pass
 
     
-    async def _extract_keywords(self, topic: str) -> Any:
+    async def _make_ontology(self, topic: str) -> Any:
         """Extract relevant keywords for a given topic using LLM."""
         
         messages = [
@@ -50,43 +65,41 @@ class OntologyAgent(BaseAgent):
 
         try:
             llm = LLMFactory.get_llm(Settings.llm_openai)
-            structured_llm = llm.with_structured_output(schema=Curriculum)
+            structured_llm = llm.with_structured_output(schema=TopicOntology)
 
             response = structured_llm.invoke(messages)    
-            print(f"response ==>> {response}")
-
-            #raw_content = response.get("choices", [{}])[0].get("message", {}).get("content", None)
-
-            #keywords_list = keywords_str.split(",") if keywords_str != "" else []            
-            #researched_keywords = ResearchedKeywords.model_validate_json(raw_content)
+            logger.info(f"response: {response}")
             
-            
-            # researched_keywords = ResearchedKeywords(keywords=raw_content, is_reviewed=False)
             return response
         except Exception as e:
             self.logger.error(f"Error extracting keywords: {str(e)}")
             return None
 
 
+    def _find_keywords(self, ontology: TopicOntology) -> dict[str, list[str]]:
+        """Find keywords in the ontology."""
+        pass
+
+
     # Review content generated for a topic.
-    async def review_content(self, topic:str, generated_content: ResearchedState) -> ResearchedState:
-        """Review content generated for a topic."""
+    # async def review_content(self, topic:str, generated_content: ResearchedState) -> ResearchedState:
+    #     """Review content generated for a topic."""
 
-        messages = [
-            {"role": "system", "content": f"Context: You are a content editor who is responsible for creating curriculum for topic {topic}. One of your editors has created the following mind-map of topics to cover in developing curriculum for it. Your task is to review and edit this content to create a final version that can be used to categorize learning topics for this subject."},
-            {"role": "user", "content":  "Here is the mindmap created by the editor:\n\n {generated_content}" }              
+    #     messages = [
+    #         {"role": "system", "content": f"Context: You are a content editor who is responsible for creating curriculum for topic {topic}. One of your editors has created the following mind-map of topics to cover in developing curriculum for it. Your task is to review and edit this content to create a final version that can be used to categorize learning topics for this subject."},
+    #         {"role": "user", "content":  "Here is the mindmap created by the editor:\n\n {generated_content}" }              
 
-        ]
-        llm = LLMFactory.get_llm(Settings.llm_claude)
-        llm.with_structured_output(ResearchedState)
+    #     ]
+    #     llm = LLMFactory.get_llm(Settings.llm_claude)
+    #     llm.with_structured_output(ResearchedState)
 
-        editor_response =  llm.invoke(messages)   
+    #     editor_response =  llm.invoke(messages)   
         
-        reviewed_content = editor_response.get("choices", [{}])[0].get("message", {}).get("content", "")
+    #     reviewed_content = editor_response.get("choices", [{}])[0].get("message", {}).get("content", "")
         
-        print(f"Reviewed Content ==>> {reviewed_content}")
+    #     print(f"Reviewed Content ==>> {reviewed_content}")
 
-        return reviewed_content;
+    #     return reviewed_content;
 
 
 
@@ -107,10 +120,9 @@ class OntologyAgent(BaseAgent):
             await self.initialize()
             
             # Get keywords for each topic
-            curriculum = await self._extract_keywords(input)
+            curriculum = await self._make_ontology(input)
 
-            print(f"1 curriculum ==>> {curriculum}") 
-
+            # TODO: review content if not already reviewed. Later can be used in a loop
             # review content if not already reviewed. Later can be used in a loop
             # if researched_keywords.is_reviewed == False:
             #     reviewed_content = await self._review_content(input, researched_keywords)
@@ -133,7 +145,7 @@ class OntologyAgent(BaseAgent):
                     error="",
                     curriculum=curriculum,
                     input=input,
-                    is_reviewed=Falses
+                    is_reviewed=False
                 )
 
         except Exception as e:
@@ -141,7 +153,7 @@ class OntologyAgent(BaseAgent):
             return ResearchedState(
                 success=False,
                 error=str(e),
-                curriculum=Curriculum(title="", description="", keywords=[]),
+                curriculum=TopicOntology(title="", description="", topics=[]),
                 input=input,
                 is_reviewed=False
             )

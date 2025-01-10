@@ -1,15 +1,10 @@
 from IPython.display import Image, display
-import os
-import sys
-# from app.research_agent.utils.nodes import graph
-
-# Add the root directory of the project to sys.path
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
-from app.research_agent.agent import app
+import asyncio
+from app.workflows.ontology_creation_workflow import create_graph
 
 
 
-def draw_agent_flow(file_path: str = "docs/agent_flow_graph.png"):
+async def draw_agent_flow(file_path: str = "docs/agent_flow_graph.png"):
     """
     Draw the agentic flow graph and save it to a file
 
@@ -20,6 +15,7 @@ def draw_agent_flow(file_path: str = "docs/agent_flow_graph.png"):
         None
     """
     try:
+        app = await create_graph()
         graph_image = app.get_graph().draw_mermaid_png()
         with open(file_path, "wb") as f:
             f.write(graph_image)
@@ -30,8 +26,8 @@ def draw_agent_flow(file_path: str = "docs/agent_flow_graph.png"):
         print("Could not draw graph. Please install graphviz and mermaid-cli to draw the graph")
 
 
-def main():
-    draw_agent_flow()
+async def main():
+    await draw_agent_flow()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
