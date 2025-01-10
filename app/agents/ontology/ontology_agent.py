@@ -135,7 +135,7 @@ class OntologyAgent(BaseAgent):
                 return ResearchedState(
                     success=False,
                     error=f"No keywords found for topic {input}",
-                    curriculum=curriculum,
+                    ontology=curriculum,
                     input=input,
                     is_reviewed=False
                 )
@@ -143,7 +143,7 @@ class OntologyAgent(BaseAgent):
             return ResearchedState(
                     success=True,
                     error="",
-                    curriculum=curriculum,
+                    ontology=curriculum,
                     input=input,
                     is_reviewed=False
                 )
@@ -153,7 +153,7 @@ class OntologyAgent(BaseAgent):
             return ResearchedState(
                 success=False,
                 error=str(e),
-                curriculum=TopicOntology(title="", description="", topics=[]),
+                ontology=TopicOntology(title="", description="", topics=[]),
                 input=input,
                 is_reviewed=False
             )

@@ -61,6 +61,6 @@ def test_download_youtube_videos():
 # export PYTHONPATH=$(pwd)
 if __name__ == "__main__":
     # use_test_data = False
-    key = Config.youtube_api_key
+    key = Settings.youtube_api_key
     print("KEY " + key)
     test_download_youtube_videos()

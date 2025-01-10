@@ -1,0 +1,169 @@
+{
+    "input": "Quantum Computing",
+    "curriculum": {
+        "title": "Quantum Computing",
+        "description": "An advanced field of computing that utilizes the principles of quantum mechanics to process information.",
+        "keywords": [
+            {
+                "title": "Introduction to Quantum Computing",
+                "children": [
+                    {
+                        "title": "History and Evolution",
+                        "children": null
+                    },
+                    {
+                        "title": "Classical vs Quantum Computing",
+                        "children": null
+                    },
+                    {
+                        "title": "Basic Concepts of Quantum Mechanics",
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "title": "Quantum Mechanics Fundamentals",
+                "children": [
+                    {
+                        "title": "Superposition",
+                        "children": null
+                    },
+                    {
+                        "title": "Entanglement",
+                        "children": null
+                    },
+                    {
+                        "title": "Quantum Tunneling",
+                        "children": null
+                    },
+                    {
+                        "title": "Quantum Interference",
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "title": "Quantum Computing Models",
+                "children": [
+                    {
+                        "title": "Quantum Gates and Circuits",
+                        "children": null
+                    },
+                    {
+                        "title": "Quantum Turing Machine",
+                        "children": null
+                    },
+                    {
+                        "title": "Adiabatic Quantum Computing",
+                        "children": null
+                    },
+                    {
+                        "title": "Topological Quantum Computing",
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "title": "Quantum Algorithms",
+                "children": [
+                    {
+                        "title": "Shor's Algorithm",
+                        "children": null
+                    },
+                    {
+                        "title": "Grover's Algorithm",
+                        "children": null
+                    },
+                    {
+                        "title": "Quantum Fourier Transform",
+                        "children": null
+                    },
+                    {
+                        "title": "Quantum Simulation",
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "title": "Quantum Hardware",
+                "children": [
+                    {
+                        "title": "Qubits and Quantum Bits",
+                        "children": null
+                    },
+                    {
+                        "title": "Quantum Processors",
+                        "children": null
+                    },
+                    {
+                        "title": "Quantum Error Correction",
+                        "children": null
+                    },
+                    {
+                        "title": "Quantum Decoherence",
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "title": "Quantum Software and Programming",
+                "children": [
+                    {
+                        "title": "Quantum Programming Languages",
+                        "children": null
+                    },
+                    {
+                        "title": "Quantum Software Development Kits (SDKs)",
+                        "children": null
+                    },
+                    {
+                        "title": "Quantum Cloud Computing",
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "title": "Applications of Quantum Computing",
+                "children": [
+                    {
+                        "title": "Cryptography",
+                        "children": null
+                    },
+                    {
+                        "title": "Optimization Problems",
+                        "children": null
+                    },
+                    {
+                        "title": "Material Science",
+                        "children": null
+                    },
+                    {
+                        "title": "Artificial Intelligence",
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "title": "Challenges and Future Directions",
+                "children": [
+                    {
+                        "title": "Scalability",
+                        "children": null
+                    },
+                    {
+                        "title": "Error Rates and Correction",
+                        "children": null
+                    },
+                    {
+                        "title": "Quantum Supremacy",
+                        "children": null
+                    },
+                    {
+                        "title": "Ethical and Societal Implications",
+                        "children": null
+                    }
+                ]
+            }
+        ]
+    }
+}

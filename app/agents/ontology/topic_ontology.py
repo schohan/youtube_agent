@@ -29,5 +29,5 @@ class TopicOntology(BaseModel):
         return {
             "title": self.title,
             "description": self.description,
-            "keywords": [keyword.to_dict() for keyword in self.topics]
+            "topics": [topic.to_dict() for topic in self.topics]
         }
