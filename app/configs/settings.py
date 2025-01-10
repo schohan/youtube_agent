@@ -8,8 +8,6 @@ import openai
 #load env variables from .evn file
 load_dotenv(override=True)
 
-print(">>> IN Settings use_test_data: " + str(os.environ.get("USE_TEST_DATA")))
-
 @dataclass
 class Settings:
     """
@@ -47,8 +45,3 @@ class Settings:
 
     use_test_data: bool = os.environ.get("USE_TEST_DATA", "True") == "True"
 
-
-    # local_llm_url = os.environ.get("LOCAL_LLM_URL", "http://localhost:8000")
-
-    print("IN Settings use_test_data: " + str(use_test_data))
-    print("IN Settings os.environ.get(USE_TEST_DATA): " + str(os.environ.get("USE_TEST_DATA")))

@@ -1,7 +1,7 @@
-from app.toolhelpers.storage.file_storage import FileStorage
-from app.configs.settings import Config
+from app.shared.storage.file_storage import FileStorage
+from app.configs.settings import Settings
 from app.configs.logging_config import get_logger
-from app.toolhelpers.storage.storage_factory import StorageFactory
+from app.shared.storage.storage_factory import StorageFactory
 import os
 import json
 
@@ -23,21 +23,21 @@ def test_set():
         }
     ]
     """
-    test_files_dir = test_files_dir = os.path.join(Config.project_root, Config.test_files_dir)      
+    test_files_dir = test_files_dir = os.path.join(Settings.project_root, Settings.test_files_dir)      
     storage = StorageFactory.get_storage("local", test_files_dir)
     storage.set("youtube-test-file-temp.json", to_save)   
     logger.info("Saved test data to file")
 
 
 def test_has_item():
-    test_files_dir = test_files_dir = os.path.join(Config.project_root, Config.test_files_dir)      
+    test_files_dir = test_files_dir = os.path.join(Settings.project_root, Settings.test_files_dir)      
     storage = StorageFactory.get_storage("local", test_files_dir)
     assert storage.has_item("youtube-result-single.json"), "Expected file to exist in storage"
     logger.info("File exists in storage")
 
 
 def test_get():
-    test_files_dir = test_files_dir = os.path.join(Config.project_root, Config.test_files_dir)      
+    test_files_dir = test_files_dir = os.path.join(Settings.project_root, Settings.test_files_dir)      
     storage = StorageFactory.get_storage("local", test_files_dir)
     data_str = storage.get("youtube-result-single.json")
     print(data_str)
@@ -52,27 +52,27 @@ def test_get():
         assert len(data) > 0, "Expected data to have at least one item"
         assert "title" in data[0], "Expected data to have a title"
         assert "description" in data[0], "Expected data to have a description"
-        assert "viewCount" in data[0], "Expected result to have a view count"
-        assert "likeCount" in data[0], "Expected result to have a like count"
-        assert "favoriteCount" in data[0], "Expected result to have a favorite count"
-        assert "commentCount" in data[0], "Expected result to have a comment count"
+        assert "view_count" in data[0], "Expected result to have a view count"
+        assert "like_count" in data[0], "Expected result to have a like count"
+        assert "favorite_count" in data[0], "Expected result to have a favorite count"
+        assert "comment_count" in data[0], "Expected result to have a comment count"
         assert "thumbnails" in data[0], "Expected data to have thumbnails list"
-        assert "captions" in data[0], "Expected data to have a captions list"
         assert "transcript" in data[0], "Expected data to have a transcript"
+        assert "published_at" in data[0], "Expected data to have a published_at"
     except Exception as e:
         assert False, "Expected data to be valid JSON"
         logger.error("Error loading JSON data from file: " + str(e))    
 
 
 def test_delete():
-    test_files_dir = test_files_dir = os.path.join(Config.project_root, Config.test_files_dir)      
+    test_files_dir = test_files_dir = os.path.join(Settings.project_root, Settings.test_files_dir)      
     storage = StorageFactory.get_storage("local", test_files_dir)
     storage.delete("youtube-test-file-temp.json")
     logger.info("Deleted test data from file")
 
 
 def test_iterate_and_process_items():
-    test_files_dir = test_files_dir = os.path.join(Config.project_root, Config.test_files_dir)      
+    test_files_dir = test_files_dir = os.path.join(Settings.project_root, Settings.test_files_dir)      
     storage = StorageFactory.get_storage("local", test_files_dir)
 
     storage.iterate_and_process_items(location=test_files_dir, filter_pattern="*.json", processor_func=lambda file: logger.info("Processing file: " + file))
