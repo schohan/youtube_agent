@@ -1,12 +1,14 @@
 from calendar import c
 from dataclasses import dataclass
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 import os
 
 import openai
 
 #load env variables from .evn file
-load_dotenv()
+load_dotenv(override=True)
+
+print(">>> IN Settings use_test_data: " + str(os.environ.get("USE_TEST_DATA")))
 
 @dataclass
 class Settings:
@@ -43,6 +45,10 @@ class Settings:
     test_files_dir = os.environ.get("TEST_FILES_DIR", "data/test")
     model_files_dir = os.environ.get("MODEL_FILES_DIR", "data/models")
 
-    use_test_data = os.environ.get("USE_TEST_DATA", True)
+    use_test_data: bool = os.environ.get("USE_TEST_DATA", "True") == "True"
+
 
     # local_llm_url = os.environ.get("LOCAL_LLM_URL", "http://localhost:8000")
+
+    print("IN Settings use_test_data: " + str(use_test_data))
+    print("IN Settings os.environ.get(USE_TEST_DATA): " + str(os.environ.get("USE_TEST_DATA")))

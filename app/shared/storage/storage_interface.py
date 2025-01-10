@@ -5,13 +5,6 @@ class Storage(ABC):
     Interface (abstract class) for storage i.e. file, database, cache etc
     """
     
-    def __init__(self, **kwargs):
-        """
-            Initialize the storage
-            Args:
-                kwargs: Additional arguments
-        """
-        pass
 
     @abstractmethod    
     def has_item(self, key) -> bool:

@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor
 import logging
 from app.configs.settings import Settings
+from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled
+import json
 
 @dataclass
 class VideoStats:
@@ -17,8 +19,12 @@ class VideoStats:
     view_count: int
     comment_count: int
     like_count: int
+    favorite_count: int
     channel_title: str
+    transcript: str
     url: str
+    thumbnails: dict
+
 
 class YouTubeSearcher:
     def __init__(self, api_key: str):
@@ -32,7 +38,8 @@ class YouTubeSearcher:
         max_results: int = 50,
         min_views: Optional[int] = None,
         min_comments: Optional[int] = None,
-        published_after: Optional[datetime] = None
+        published_after: Optional[datetime] = None,
+        relevance_language: Optional[str] = None
     ) -> List[VideoStats]:
         """
         Search YouTube videos with filtering.
@@ -55,7 +62,8 @@ class YouTubeSearcher:
                 type='video',
                 maxResults=min(max_results, 50),  # API limit is 50
                 order='relevance',
-                publishedAfter=published_after.isoformat() + 'Z' if published_after else None
+                publishedAfter=published_after.isoformat() + 'Z' if published_after else None,
+                relevanceLanguage=relevance_language
             )
             
             search_response = search_request.execute()
@@ -79,13 +87,43 @@ class YouTubeSearcher:
             self.logger.error(f"Unexpected error: {str(e)}")
             raise
 
+
+    def _save_to_json(self, videos: list[VideoStats], path: str):
+        """Save video details to JSON file."""
+        try:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, 'w', encoding='utf-8') as f:
+                videos_data = [
+                    {**video.__dict__,'published_at': video.published_at.isoformat()} for video in videos
+                ]
+                json.dump(videos_data, f, ensure_ascii=True, indent=2)
+        except Exception as e:
+            self.logger.error(f"Error saving to JSON: {str(e)}")        
+
+
+
+
+    def _get_video_transcript(self, video_id: str) -> str:
+        """Fetch video transcript using youtube_transcript_api."""
+        try:
+            transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
+            return ' '.join([line['text'] for line in transcript_list])
+        except TranscriptsDisabled:
+            self.logger.warning(f"Transcripts are disabled for video {video_id}")
+            return ""
+        except Exception as e:
+            self.logger.warning(f"Error fetching transcript for video {video_id}: {str(e)}")
+            return ""            
+
+
     def _get_filtered_video_stats(
         self,
         video_ids: List[str],
         min_views: Optional[int],
         min_comments: Optional[int]
-    ) -> List[VideoStats]:
+    ) -> list[VideoStats]:
         """Get and filter detailed video statistics."""
+        
         try:
             # Get video statistics in batches
             videos_data = []
@@ -111,6 +149,12 @@ class YouTubeSearcher:
                     if min_comments and comment_count < min_comments:
                         continue
                     
+                    # get transcript
+                    transcript = self._get_video_transcript(video['id'])
+
+                    if not transcript:
+                        continue
+
                     filtered_videos.append(VideoStats(
                         video_id=video['id'],
                         title=video['snippet']['title'],
@@ -122,8 +166,11 @@ class YouTubeSearcher:
                         view_count=view_count,
                         comment_count=comment_count,
                         like_count=int(stats.get('likeCount', 0)),
+                        favorite_count=int(stats.get('favoriteCount', 0)),
                         channel_title=video['snippet']['channelTitle'],
-                        url=f"https://youtube.com/watch?v={video['id']}"
+                        transcript=transcript,
+                        url=f"https://youtube.com/watch?v={video['id']}",
+                        thumbnails=video['snippet']['thumbnails']
                     ))
                     
                 except (KeyError, ValueError) as e:
@@ -136,6 +183,7 @@ class YouTubeSearcher:
             self.logger.error(f"Error getting video statistics: {str(e)}")
             raise
 
+
 def format_number(num: int) -> str:
     """Format large numbers for display."""
     if num >= 1_000_000:
@@ -143,6 +191,7 @@ def format_number(num: int) -> str:
     if num >= 1_000:
         return f"{num/1_000:.1f}K"
     return str(num)
+
 
 # Example usage
 def main():
@@ -164,23 +213,31 @@ def main():
     try:
         videos = searcher.search_videos(
             query=search_term,
-            max_results=50,
+            max_results=5,
             min_views=min_views,
-            min_comments=min_comments
+            min_comments=min_comments,
+            published_after=datetime(2024, 1, 1),
+            relevance_language='en'
         )
         
+        # save to json
+        searcher._save_to_json(videos, f"data/raw/videos_{search_term}.json")
+
         # Print results
         print(f"\nTop videos for '{search_term}':")
         print("-" * 80)
         
         for i, video in enumerate(videos, 1):
-            print(f"\n{i}. {video.title}")
+            print(f"\n\n{i}->. {video.title}")
             print(f"Channel: {video.channel_title}")
+            print(f"Description: {video.description}")
             print(f"Views: {format_number(video.view_count)} | "
                   f"Comments: {format_number(video.comment_count)} | "
                   f"Likes: {format_number(video.like_count)}")
+            print(f"Transcript Preview: {video.transcript[:200]}")
             print(f"URL: {video.url}")
-            
+            print(f"Published At: {video.published_at}")
+            print(f"Thumbnails: {video.thumbnails}")
     except Exception as e:
         logging.error(f"Error searching videos: {str(e)}")
 

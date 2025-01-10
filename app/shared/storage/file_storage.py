@@ -10,8 +10,6 @@ class FileStorage(Storage):
     File storage class. Implments the Storage interface to act on files stored in local/mounted file storage. 
     Items are stored with the filename as key. 
     """
-    type = "local"    
-    logger = getLogger(__name__)
 
     def __init__(self, file_dir: str):        
         """
@@ -19,6 +17,7 @@ class FileStorage(Storage):
             Args:
                 directory (str): The directory to store files
         """
+        self.logger = getLogger(__name__)
         self.directory = file_dir
         self.logger.info(f"Initializing FileStorage with directory {self.directory}")
 
@@ -80,7 +79,7 @@ class FileStorage(Storage):
                 value (str): The value to write to the file
         """
         file_path = os.path.join(self.directory, key)
-        logger.info(f"Saving contents to file {file_path} ")
+        self.logger.info(f"Saving contents to file {file_path} ")
         try:
             with open(file_path, 'w') as file:
                 file.write(value)

@@ -1,7 +1,6 @@
-import os
-from app.toolhelpers.storage.file_storage import FileStorage
-from app.toolhelpers.storage.s3_storage import S3Storage
-from app.configs.settings import Config
+from app.shared.storage.file_storage import FileStorage
+from app.shared.storage.s3_storage import S3Storage
+from app.configs.settings import Settings
 
 class StorageFactory:
     """

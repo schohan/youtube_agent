@@ -1,6 +1,5 @@
-from venv import logger
 from attr import dataclass
-from app.toolhelpers.data_converters.json_helper import JsonHelper
+from app.shared.data_converters.json_helper import JsonHelper
 from app.configs.logging_config import get_logger
 
 logger = get_logger(__name__)

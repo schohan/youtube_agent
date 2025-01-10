@@ -1,9 +1,12 @@
+# DEPRECATED. This class is deprecated. Use youtube_search.py instead.
 from datetime import date
 from logging import getLogger
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi
 from dataclasses import dataclass
 from datetime import date
+
+
 
 @dataclass
 class YoutubeSnippet:
@@ -22,7 +25,6 @@ class YoutubeSnippet:
     favoriteCount: int = 0   
     commentCount: int = 0
     
-
 
 
 class Youtube:

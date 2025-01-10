@@ -1,66 +1,75 @@
 import os
 from dotenv import load_dotenv
 import sys
-from app.configs.logging_config import get_logger
-from app.configs.settings import Settings
-
+from app.shared.content.youtube_search import YouTubeSearcher
 # Ensure the PYTHONPATH environment variable is set to the parent directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
+# Load environment variables from .env file
+load_dotenv()
+
+from app.configs.settings import Settings
+from app.configs.logging_config import get_logger
+from app.shared.content.youtube_search import YouTubeSearcher
+from app.shared.storage.file_storage import FileStorage
+from app.shared.storage.storage_interface import Storage
+from app.shared.storage.storage_factory import StorageFactory
+from app.shared.data_converters.json_helper import JsonHelper
+from app.shared.content.youtube_search import VideoStats
 
 # Create a logger
 logger = get_logger(__name__)
 
-# Load environment variables from .env file
-load_dotenv()
-
-from app.agents.utils.tools import search_youtube_videos 
-from app.toolhelpers.storage.file_storage import FileStorage
-from app.toolhelpers.storage.storage_interface import Storage
-from app.toolhelpers.storage.storage_factory import StorageFactory
-
-use_test_data = Config.use_test_data
 
 def test_download_youtube_videos():
     """
     A functional test that makes actual API call or process a saved JSON file based on the value of 'use_test_data' field. 
     The function should validate content of returned object that is a list of dictionaries with video details.
     """
+    use_test_data = Settings.use_test_data
     logger.info("Running test_get_youtube_videos. Using test data? " + str(use_test_data))
+
+    logger.info("Use TEST DATA in OS: " + str(os.environ.get("USE_TEST_DATA")))
+    logger.info("Use TEST DATA in Settings: " + str(Settings.use_test_data))
     
+    searcher = YouTubeSearcher(Settings.youtube_api_key)
     search_term = "asthma treatments"
     results = []
     
     if use_test_data:        
         logger.info("Getting youtube videos from local file")
-        test_files_dir = test_files_dir = os.path.join(Config.project_root, Config.test_files_dir)
+        test_files_dir = os.path.join(Settings.project_root, Settings.test_files_dir)
         storage = StorageFactory.get_storage("local", test_files_dir)
-        results.append (storage.get("youtube-result-single.json"))
+        file_content = storage.get("youtube-result-single.json")
+        if file_content is None:
+            raise ValueError("Could not read youtube-result-single.json")
+        results = JsonHelper.str_to_list(file_content, VideoStats)
     else:
         logger.info("Getting youtube videos for search term from Youtube: " + search_term)
-        results = search_youtube_videos(search_term)
+        results = searcher.search_videos(search_term)
     
-    logger.debug("Fetched result: " + str(results))
+    # logger.debug("Fetched result: " + str(results))
 
     assert isinstance(results, list), "Expected a list of results"
     assert len(results) > 0, "Expected at least one result"
-    
-    assert "videoId" in results[0], "Expected result to have videoid"
-    assert "title" in results[0], "Expected result to have a title"
-    assert "description" in results[0], "Expected data to have a description"
-    assert "viewCount" in results[0], "Expected result to have a view count"
-    assert "likeCount" in results[0], "Expected result to have a like count"
-    assert "favoriteCount" in results[0], "Expected result to have a favorite count"
-    assert "commentCount" in results[0], "Expected result to have a comment count"
-    assert "thumbnails" in results[0], "Expected result to have thumbnails list"
-    assert "captions" in results[0], "Expected result to have a captions list"
-    assert "transcript" in results[0], "Expected result to have a transcript"
+
+    video_data = results[0]
+    logger.debug("Fetched Video: " + str(video_data))
+
+    assert hasattr(video_data, "video_id"), "Expected result to have video_id"
+    assert hasattr(video_data, "title"), "Expected result to have a title"
+    assert hasattr(video_data, "description"), "Expected result to have a description"
+    assert hasattr(video_data, "view_count"), "Expected result to have a view count"
+    assert hasattr(video_data, "like_count"), "Expected result to have a like count"
+    assert hasattr(video_data, "favorite_count"), "Expected result to have a favorite count"
+    assert hasattr(video_data, "comment_count"), "Expected result to have a comment count"
+    assert hasattr(video_data, "thumbnails"), "Expected result to have thumbnails list"
+    assert hasattr(video_data, "transcript"), "Expected result to have a transcript"
 
 
 # Run the test
 # if modules are not found, add the path to the modules to the PYTHONPATH
 # export PYTHONPATH=$(pwd)
 if __name__ == "__main__":
-    # use_test_data = False
     key = Settings.youtube_api_key
     print("KEY " + key)
     test_download_youtube_videos()
