@@ -9,6 +9,7 @@ import logging
 from app.configs.settings import Settings
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled
 import json
+import asyncio
 
 @dataclass
 class VideoStats:
@@ -32,7 +33,7 @@ class YouTubeSearcher:
         self.youtube = build('youtube', 'v3', developerKey=api_key)
         self.logger = logging.getLogger(__name__)
 
-    def search_videos(
+    async def search_videos(
         self,
         query: str,
         max_results: int = 50,
@@ -194,7 +195,7 @@ def format_number(num: int) -> str:
 
 
 # Example usage
-def main():
+async def main():
     # Set up logging
     logging.basicConfig(level=logging.INFO)
     
@@ -211,7 +212,7 @@ def main():
     min_comments = 10
     
     try:
-        videos = searcher.search_videos(
+        videos = await searcher.search_videos(
             query=search_term,
             max_results=5,
             min_views=min_views,
@@ -242,4 +243,4 @@ def main():
         logging.error(f"Error searching videos: {str(e)}")
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

@@ -24,11 +24,8 @@ def test_researched_ontology():
     ontology = [TopicNode(title='Health', children=[TopicNode(title='Physical Health', children=[TopicNode(title='Exercise', children=[TopicNode(title='Cardiovascular', children=None), TopicNode(title='Strength Training', children=None), TopicNode(title='Flexibility', children=None)]), TopicNode(title='Nutrition', children=[TopicNode(title='Balanced Diet', children=None), TopicNode(title='Hydration', children=None), TopicNode(title='Vitamins and Minerals', children=None)]), TopicNode(title='Sleep', children=[TopicNode(title='Sleep Hygiene', children=None), TopicNode(title='Sleep Disorders', children=None)]), TopicNode(title='Preventive Care', children=[TopicNode(title='Vaccinations', children=None), TopicNode(title='Regular Check-ups', children=None)])]), TopicNode(title='Mental Health', children=[TopicNode(title='Stress Management', children=[TopicNode(title='Mindfulness', children=None), TopicNode(title='Meditation', children=None)]), TopicNode(title='Mental Disorders', children=[TopicNode(title='Anxiety', children=None), TopicNode(title='Depression', children=None)]), TopicNode(title='Therapies', children=[TopicNode(title='Cognitive Behavioral Therapy', children=None), TopicNode(title='Psychotherapy', children=None)])]), TopicNode(title='Social Health', children=[TopicNode(title='Relationships', children=[TopicNode(title='Family', children=None), TopicNode(title='Friendships', children=None)]), TopicNode(title='Community Engagement', children=[TopicNode(title='Volunteering', children=None), TopicNode(title='Social Activities', children=None)])]), TopicNode(title='Environmental Health', children=[TopicNode(title='Pollution', children=[TopicNode(title='Air Quality', children=None), TopicNode(title='Water Quality', children=None)]), TopicNode(title='Sustainability', children=[TopicNode(title='Recycling', children=None), TopicNode(title='Conservation', children=None)])]), TopicNode(title='Occupational Health', children=[TopicNode(title='Work-Life Balance', children=[TopicNode(title='Time Management', children=None), TopicNode(title='Stress Reduction', children=None)]), TopicNode(title='Workplace Safety', children=[TopicNode(title='Ergonomics', children=None), TopicNode(title='Hazard Prevention', children=None)])])])]
     ontology_json = json.dumps([keyword.to_dict() for keyword in ontology], indent=3)
     
-    #print(f"ontology==>> {ontology_json}")
-    #logger.info(f"ontology==>> {ontology_json}")
-
-    assert "Sleep Hygiene" in ontology_json
-    assert "Environmental Health" in ontology_json
+    assert ontology_json is not None and "Sleep Hygiene" in ontology_json
+    assert ontology_json is not None and "Environmental Health" in ontology_json
     
 
 def test_mind_map():
@@ -53,17 +50,16 @@ def test_load_curriculum_ontology():
     Test loading and validating curriculum ontology from JSON file
     """
     # Load JSON file
-    with open('data/test/curriculum-ontology.json', 'r') as f:
-        curriculum_data = json.load(f)
     
+    curriculum_data = TopicOntology.load_ontology('data/test/curriculum-ontology.json')
     # Basic structure validation
-    assert isinstance(curriculum_data, dict)
-    assert "title" in curriculum_data
-    assert "children" in curriculum_data
-    assert curriculum_data["title"] == "Health"
+    assert isinstance(curriculum_data, TopicOntology)
+    assert hasattr(curriculum_data, 'title')
+    assert hasattr(curriculum_data, 'topics')
+    assert curriculum_data.title == "Health"
     
     # Validate first level categories exist
-    first_level = [child["title"] for child in curriculum_data["children"]]
+    first_level = [child.title for child in curriculum_data.topics]
     expected_categories = [
         "Physical Health",
         "Mental Health", 
@@ -74,10 +70,10 @@ def test_load_curriculum_ontology():
     assert all(category in first_level for category in expected_categories)
     
     # Validate some nested structures
-    physical_health = next(child for child in curriculum_data["children"] 
-                            if child["title"] == "Physical Health")
-    assert "Exercise" in [child["title"] for child in physical_health["children"]]
+    physical_health = next(child for child in curriculum_data.topics 
+                         if child.title == "Physical Health")
+    assert physical_health.children is not None and "Exercise" in [child.title for child in physical_health.children]
     
-    mental_health = next(child for child in curriculum_data["children"]
-                        if child["title"] == "Mental Health")
-    assert "Stress Management" in [child["title"] for child in mental_health["children"]]
+    mental_health = next(child for child in curriculum_data.topics
+                        if child.title == "Mental Health")
+    assert mental_health.children is not None and "Stress Management" in [child.title for child in mental_health.children]

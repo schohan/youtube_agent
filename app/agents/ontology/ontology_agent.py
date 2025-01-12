@@ -76,10 +76,6 @@ class OntologyAgent(BaseAgent):
             return None
 
 
-    def _find_keywords(self, ontology: TopicOntology) -> dict[str, list[str]]:
-        """Find keywords in the ontology."""
-        pass
-
 
     # Review content generated for a topic.
     # async def review_content(self, topic:str, generated_content: ResearchedState) -> ResearchedState:

@@ -12,9 +12,10 @@ import uuid
 import os
 from app.configs.settings import Settings
 from langchain_core.runnables import RunnableConfig
+from app.shared.content.youtube_search import YouTubeSearcher
+from app.shared.content.youtube_search import VideoStats
 
 settings = Settings()
-
 
 # Node for ontology extraction
 async def ontology_node(state: ResearchedState) -> ResearchedState:    
@@ -26,11 +27,28 @@ async def ontology_node(state: ResearchedState) -> ResearchedState:
     print(f"ontology_node: Ontology extraction result==>>> {res}")
     return res
    
+
+async def youtube_node(state: ResearchedState) -> ResearchedState:
+    print(f"youtube_node: Executing youtube node with inputs==>>>  {state.to_json()}")
+    agent = YouTubeSearcher(settings.youtube_api_key)
+    
+    # TODO get videos for the keywords based on the ontology
+    
+    videos: list[VideoStats] = await agent.search_videos(state.input)
+    
+    # TODO attach tool to save videos to storage
+
+    print(f"youtube_node: YouTube extraction result==>>> {videos}")
+    state.videos=videos        
+    return state
+
 async def create_graph():
     graph = StateGraph(ResearchedState)
     graph.add_node('ontology_extractor', ontology_node)
+    graph.add_node('youtube_extractor', youtube_node)
     graph.add_edge(START, 'ontology_extractor')
-    graph.add_edge('ontology_extractor', END)
+    graph.add_edge('ontology_extractor', 'youtube_extractor')
+    graph.add_edge('youtube_extractor', END)
 
     app = graph.compile()
     return app
