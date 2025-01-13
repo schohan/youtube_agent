@@ -1,107 +1,80 @@
 from typing import final
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph, START, END
+from app.agents.youtube.youtube_agent import search_youtube
+from app.shared.content.youtube_search import YouTubeSearcher
+from app.configs.settings import Settings
+from datetime import datetime, timedelta
+from app.agents.ontology.topic_ontology import TopicOntology
+from app.shared.storage.storage_factory import StorageFactory
+import logging
 
-from app.research_agent.utils.nodes import tool_node, should_continue, search_youtube, find_keywords
-from app.research_agent.utils.state import State
+class YoutubeAgent:
 
+    def __init__(self, storage_type: str = Settings.storage_type):
+        self.storage_dir = Settings.raw_files_dir
+        self.youtube_searcher = YouTubeSearcher(Settings.youtube_api_key)
+        self.storage = StorageFactory.get_storage(storage_type, self.storage_dir)
+        self.min_views = 1000
+        self.min_comments = 100
+        self.last_n_days = 30
+        self.logger = logging.getLogger(__name__)
 
-workflow = StateGraph(State)
+    async def download_youtube_videos(self, search_term: str, last_n_days: int = 30):
+        """
+        Get youtube videos based on a query
 
-# Define the two nodes we will cycle between
-#workflow.add_node("find_keywords", find_keywords)
-workflow.add_node("youtube_agent", search_youtube)
-#workflow.add_node("tools", tool_node)
+        Args:
+            search_term (str): The query to search for
+            last_n_days (int): The number of days to search for
+        Returns:
+            results (list): A list of dictionaries with video details
+        """
 
-# Set the entrypoint as `agent`
-# This means that this node is the first one called
-workflow.add_edge(START, "youtube_agent")
-# workflow.add_edge("find_keywords", "search_youtube")
+        return await self.youtube_searcher.search_videos(search_term, 
+                                                   max_results=Settings.max_youtube_results, 
+                                                   min_views=self.min_views, 
+                                                   min_comments=self.min_comments, 
+                                                   published_after=datetime.now() - timedelta(days=self.last_n_days))
 
-# We now add a conditional edge
-# workflow.add_conditional_edges(
-#     # First, we define the start node. We use `agent`.
-#     # This means these are the edges taken after the `agent` node is called.
-#     "youtube_agent",
-#     # Next, we pass in the function that will determine which node is called next.
-#     should_continue,
-# )
+   
 
-# We now add a normal edge from `tools` to `youtube_agent`.
-# This means that after `tools` is called, `youtube_agent` node is called next.
-#workflow.add_edge("tools", 'youtube_agent')
-workflow.add_edge("youtube_agent", END)
-# Initialize memory to persist state between graph runs
-checkpointer = MemorySaver()
+    async def download_youtube_videos_for_keywords(self, keywords: dict[str, str], last_n_days: int = 30):
+        """
+        Get youtube videos based on a list of keywords
 
-# Finally, we compile it!
-# This compiles it into a LangChain Runnable,
-# meaning you can use it as you would any other runnable.
-# Note that we're (optionally) passing the memory when compiling the graph
-app = workflow.compile(checkpointer=checkpointer)
+        Args:
+            keywords (dict[str, str]): A dictionary of keywords and their descriptions
+            last_n_days (int): The number of days to search for
 
-
-
-def start_agent(user_input: str | list[str], thread_id: int ):
-
-    final_state = app.invoke(
-        {"topics": user_input},
-        config={"configurable": {"thread_id": thread_id}}
-    )   
-    print("=>>> End of agent run <==", final_state)
-
-    return final_state
-
-
-
-
-
-# def download_youtube_videos(query: str):
-#     """
-#     Get youtube videos based on a query
-
-#     Args:
-#         query (str): The query to search for
-
-#     Returns:
-#         results (list): A list of dictionaries with video details
-#     """
-
-#     api_key = Config.youtube_api_key # os.environ.get("YOUTUBE_API_KEY")
-#     max_results = Config.max_youtube_results # int(os.environ.get("MAX_YOUTUBE_RESULTS", 10))
-
-#     print("Config.youtube_api_key " + api_key)
-
-#     results = search_youtube_videos(query, api_key)
-#     return results
+        Returns:
+            results (list): A list of dictionaries with video details
+        """
+        for k,v in keywords.items():
+           self.logger.info(f"Downloading videos for {k}")
+           try:
+               # check if the file exists
+               if self.storage.get(f"{self.storage_dir}/videos_{k}.json"):
+                   self.logger.info(f"File already exists for {k}")
+                   continue
+               
+               videos = await self.download_youtube_videos(v, last_n_days)
+               self.storage.set(  f"{self.storage_dir}/videos_{k}.json", videos)
+           except Exception as e:
+               self.logger.error(f"Error downloading videos for {k}: {e}")
 
 
-# def process_raw_videos():
-#     """
-#     Process raw downloaded youtube videos from configured raw video location. Processing involves:
-#      a. Summarizing videos using transcript
-#      b. Save processed objects along with metadata to storage for use by application
 
-#     Args:
-#         None
+    async def download_youtube_videos_for_ontology(self, ontology: TopicOntology, last_n_days: int = 30):
+        """
+        Get youtube videos based on a ontology
+        
+        Args:
+            ontology (TopicOntology): The ontology to search for
+            last_n_days (int): The number of days to search for
 
-#     Returns:
-#         None
-#     """
-#     # 
-#     # process all files in the given directory. Use supplied functions to process the files
-#     # TODO: Implement this function  
-#     return f"{__name__} Not implemented"
-    
-
-
-# def stream_graph_updates(user_input: str):
-#     for event in graph.stream({"messages": [("user", user_input)]}):
-#         for value in event.values():
-#             print("Assistant:", value["messages"][-1].content)
-#             return value["messages"][-1].content
-
-# graph.stream({"messages": [("user", "asthma treatments")]})
-
-#download_youtube_videos("asthma treatments")
-
+        Returns:
+            results (list): A list of dictionaries with video details
+        """
+        keywords = ontology.get_keywords()
+        await self.download_youtube_videos_for_keywords(keywords, last_n_days)

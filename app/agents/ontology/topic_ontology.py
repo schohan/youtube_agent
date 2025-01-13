@@ -8,7 +8,8 @@ class TopicNode(BaseModel):
     TopicNode is a model representing a node in a mind map.
     """
     title: str = Field(..., description="The title of the topic")
-    children: Optional[list['TopicNode']] = Field(None, description="The children of the topic")
+    children: list['TopicNode'] = Field([], description="The children of the topic")
+    
 
     def to_dict(self):
         return {
@@ -33,14 +34,7 @@ class TopicOntology(BaseModel):
             "topics": [topic.to_dict() for topic in self.topics]
         }
     
-    # def load_ontology(file_path: str) -> 'TopicOntology':
-    #     """
-    #     Create an ontology object using JSON from a file.
-    #     """
-    #     with open(file_path, 'r') as file:
-    #        curriculum_data: TopicOntology = json.load(fp=file)
-    #        print(f"Curriculum Data: {curriculum_data}")
-    #        return curriculum_data["curriculum"]
+
 
     @staticmethod
     def load_ontology(file_path: str) -> 'TopicOntology':
@@ -66,6 +60,33 @@ class TopicOntology(BaseModel):
         
         return ontology
 
+    def get_keywords(self) -> dict[str, str]:
+        """
+        Get the keywords from the ontology as a dictionary. Keywords are only created using titles of leaf objects who has no further children.
+        Keys are the concatenation of the titles. Values are the title of the leaf object + the title of the parent object.
+        For example {"physical health-exercise-cardiovascular": "cardiovascular exercise"}
+        """
+        keywords = {}
+        
+        def process_node(node: TopicNode, parent_title: str = "", path: list = []):
+            current_path = path + [node.title]
+            
+            if not node.children:  # Leaf node
+                # Create key by joining the path with hyphens
+                key = "-".join(current_path).lower()
+                # Create value by combining current node title with parent title
+                value = f"{node.title} {parent_title}".strip().lower()
+                keywords[key] = value
+            else:
+                # Recursively process children
+                for child in node.children:
+                    process_node(child, node.title, current_path)
+        
+        # Process each top-level topic
+        for topic in self.topics:
+            process_node(topic)
+            
+        return keywords
 
 
 if __name__ == "__main__":
@@ -77,4 +98,6 @@ if __name__ == "__main__":
     assert hasattr(curriculum_data, 'title')
     assert hasattr(curriculum_data, 'topics')
     assert curriculum_data.title == "Health"
-    
+
+    keywords = curriculum_data.get_keywords()
+    print(f"Keywords: {keywords}")
