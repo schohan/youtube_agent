@@ -4,7 +4,7 @@ from typing_extensions import TypedDict
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from pydantic import BaseModel, Field
-from app.toolhelpers.content.youtube import YoutubeSnippet
+from app.shared.content.youtube_search import VideoStats
 
 
 class TopicList(BaseModel):
@@ -18,7 +18,7 @@ class VideoList(BaseModel):
     """
     List of videos that we want to summarize
     """
-    videos: List[YoutubeSnippet] = Field(description="List of youtube videos")
+    videos: List[VideoStats] = Field(description="List of youtube videos")
 
 
 class State(TypedDict):

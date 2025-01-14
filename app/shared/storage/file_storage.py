@@ -1,4 +1,6 @@
 from logging import getLogger
+
+from sqlalchemy import exists
 from app.shared.storage.storage_interface import Storage
 from app.configs.settings import Settings
 import os
@@ -70,7 +72,7 @@ class FileStorage(Storage):
             return file.read()
     
     # overrides the set method in the Storage class
-    def set(self, key, value):
+    def set(self, key: str, value: str):
         """
             Set the contents of the file in the storage directory.
             
@@ -80,6 +82,7 @@ class FileStorage(Storage):
         """
         file_path = os.path.join(self.directory, key)
         self.logger.info(f"Saving contents to file {file_path} ")
+        
         try:
             with open(file_path, 'w') as file:
                 file.write(value)

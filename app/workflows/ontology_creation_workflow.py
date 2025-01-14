@@ -14,9 +14,10 @@ import uuid
 import os
 from app.configs.settings import Settings
 from langchain_core.runnables import RunnableConfig
-from app.shared.content.youtube_search import YouTubeSearcher
 from app.shared.content.youtube_search import VideoStats
 from app.agents.ontology.topic_ontology import TopicNode, TopicOntology
+from app.agents.youtube.youtube_agent import YoutubeAgent
+
 settings = Settings()
 
 # Node for ontology extraction
@@ -27,12 +28,15 @@ async def ontology_node(state: ResearchedState) -> ResearchedState:
     res = await agent.execute(state.input)
     # res = state
     print(f"ontology_node: Ontology extraction result==>>> {res}")
+
+    # save the ontology to a json file
+    res.ontology.save_to_json(f"data/raw/ontology_{state.input}.json")
     return res
    
 
 async def youtube_node(state: ResearchedState) -> ResearchedState:
     print(f"youtube_node: Executing youtube node with inputs==>>>  {state.to_json()}")
-    agent = YouTubeSearcher(settings.youtube_api_key)
+    agent = YoutubeAgent(settings.storage_type)
     
     # TODO get videos for the keywords based on the ontology
     
@@ -40,7 +44,7 @@ async def youtube_node(state: ResearchedState) -> ResearchedState:
     #videos: list[VideoStats] = await agent.search_videos(state.input)
 
     # get keywords from the ontology
-    await agent.download_youtube_videos_for_ontology(state.ontology, 30)
+    await agent.download_youtube_videos_for_ontology(state.ontology)
     #keywords = state.ontology.get_keywords()
     #print(f"youtube_node: Keywords==>>> {keywords}")
 
@@ -71,12 +75,30 @@ async def test_node(state: ResearchedState) -> ResearchedState:
 
 
 async def create_graph():
+    """
+    This is the main graph for the ontology creation workflow. It is used as a simple workflow. 
+    TODO: add conditional nodes to the graph to handle the different workflows
+    """
     graph = StateGraph(ResearchedState)
-   # graph.add_node('ontology_extractor', ontology_node)
+    graph.add_node('ontology_extractor', ontology_node)
     graph.add_node('youtube_extractor', youtube_node)
+   
+    graph.add_edge(START, 'ontology_extractor')
+    graph.add_edge('ontology_extractor', 'youtube_extractor')    
+    graph.add_edge('youtube_extractor', END)
+
+    app = graph.compile()
+    return app
+
+
+
+async def create_test_graph():
+    """
+    This is a test graph for the ontology creation workflow. It is used to test the youtube fetching of limited videos
+    """
+    graph = StateGraph(ResearchedState)
     graph.add_node('test_node', test_node)
-   # graph.add_edge(START, 'ontology_extractor')
-   # graph.add_edge('ontology_extractor', 'youtube_extractor')
+    graph.add_node('youtube_extractor', youtube_node)
     graph.add_edge(START, 'test_node')
     graph.add_edge('test_node', 'youtube_extractor')
     
@@ -89,12 +111,10 @@ async def create_graph():
 async def main():
     app = await create_graph()
     config = RunnableConfig(metadata={"thread_id": str(uuid.uuid4())})
-    input_message =  input("Enter your topic for keyword extraction: ")  
+    input_message =  input("\n\nEnter a topic to build a mind map and extract videos for each topic in it: ")  
 
     state = ResearchedState(input=input_message)
 
-    # for event in graph.stream({"messages": [input_message]}, config, stream_mode="values"):
-    #     event["messages"][-1].pretty_print()
     print(f"main: state==>>> {state.to_json_str()}")
     res = await app.ainvoke(state, config=config)
 

@@ -4,7 +4,7 @@ from dataclasses import asdict
 class JsonHelper:
     
     @staticmethod
-    def str_to_list(json_list_str: str, data_class):
+    def json_to_list(json_list_str: str, data_class):
         """
         Convert a string to a JSON object
         Args:
@@ -17,7 +17,7 @@ class JsonHelper:
     
 
     @staticmethod
-    def list_to_str(json_data_list: list):
+    def list_to_json(json_data_list: list):
         """
         Convert a JSON object to a string
         Args:
@@ -32,7 +32,7 @@ class JsonHelper:
     
 
     @staticmethod
-    def json_to_str(json_data):
+    def to_json(json_data):
         """
         Convert a JSON object to a string
         Args:
@@ -40,10 +40,11 @@ class JsonHelper:
         Returns:
             str: The JSON object as a string
         """
-        return json.dumps(asdict(json_data))
+        #return json.dumps(asdict(json_data))
+        return json.dumps(json_data)
     
     @staticmethod
-    def str_to_json(json_str):
+    def load_json(json_str):
         """
         Convert a string to a JSON object
         Args:

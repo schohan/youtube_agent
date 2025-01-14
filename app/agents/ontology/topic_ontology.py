@@ -35,6 +35,12 @@ class TopicOntology(BaseModel):
         }
     
 
+    def save_to_json(self, file_path: str):
+        """Save the ontology to a JSON file."""
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(self.to_dict(), f, ensure_ascii=True, indent=2)
+            
+
 
     @staticmethod
     def load_ontology(file_path: str) -> 'TopicOntology':

@@ -64,9 +64,11 @@ class YouTubeSearcher:
                 maxResults=min(max_results, 50),  # API limit is 50
                 order='relevance',
                 publishedAfter=published_after.isoformat() + 'Z' if published_after else None,
-                relevanceLanguage=relevance_language
+                relevanceLanguage=relevance_language,
+                videoDuration='long'
             )
-            
+            self.logger.info(f"Searching for videos with query: {query}")
+
             search_response = search_request.execute()
             video_ids = [item['id']['videoId'] for item in search_response.get('items', [])]
             
@@ -74,6 +76,8 @@ class YouTubeSearcher:
                 self.logger.warning(f"No videos found for query: {query}")
                 return []
             
+            self.logger.info(f"Before filtering, found {len(video_ids)} videos for query: {query}")
+
             # Get detailed video statistics
             return self._get_filtered_video_stats(
                 video_ids,
@@ -89,7 +93,7 @@ class YouTubeSearcher:
             raise
 
 
-    def _save_to_json(self, videos: list[VideoStats], path: str):
+    def save_to_json(self, videos: list[VideoStats], path: str):
         """Save video details to JSON file."""
         try:
             os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -104,10 +108,10 @@ class YouTubeSearcher:
 
 
 
-    def _get_video_transcript(self, video_id: str) -> str:
+    def get_video_transcript(self, video_id: str) -> str:
         """Fetch video transcript using youtube_transcript_api."""
         try:
-            transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
+            transcript_list = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])
             return ' '.join([line['text'] for line in transcript_list])
         except TranscriptsDisabled:
             self.logger.warning(f"Transcripts are disabled for video {video_id}")
@@ -151,7 +155,7 @@ class YouTubeSearcher:
                         continue
                     
                     # get transcript
-                    transcript = self._get_video_transcript(video['id'])
+                    transcript = self.get_video_transcript(video['id'])
 
                     if not transcript:
                         continue
@@ -160,9 +164,8 @@ class YouTubeSearcher:
                         video_id=video['id'],
                         title=video['snippet']['title'],
                         description=video['snippet']['description'],
-                        published_at=datetime.strptime(
-                            video['snippet']['publishedAt'],
-                            '%Y-%m-%dT%H:%M:%SZ'
+                        published_at=datetime.fromisoformat(
+                            video['snippet']['publishedAt']
                         ),
                         view_count=view_count,
                         comment_count=comment_count,
@@ -178,6 +181,7 @@ class YouTubeSearcher:
                     self.logger.warning(f"Error processing video {video.get('id')}: {str(e)}")
                     continue
             
+            self.logger.info(f"After filtering, found {len(filtered_videos)} videos")
             return sorted(filtered_videos, key=lambda x: x.view_count, reverse=True)
             
         except Exception as e:
@@ -222,7 +226,7 @@ async def main():
         )
         
         # save to json
-        searcher._save_to_json(videos, f"data/raw/videos_{search_term}.json")
+        searcher.save_to_json(videos, f"data/raw/videos_{search_term}.json")
 
         # Print results
         print(f"\nTop videos for '{search_term}':")

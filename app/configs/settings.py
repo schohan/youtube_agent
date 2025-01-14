@@ -33,9 +33,15 @@ class Settings:
     # api keys and related props  
     openai_api_key = os.environ.get("OPENAI_API_KEY", "")
     tavily_api_key = os.environ.get("TAVILY_API_KEY", "")
+
+    # youtube related props
     youtube_api_key = os.environ.get("YOUTUBE_API_KEY", "")
-    max_youtube_results = int(os.environ.get("MAX_YOUTUBE_RESULTS", 10))
-    
+    youtube_max_results = int(os.environ.get("YOUTUBE_MAX_RESULTS", 10))
+    youtube_min_views = int(os.environ.get("YOUTUBE_MIN_VIEWS", 1000))
+    youtube_min_comments = int(os.environ.get("YOUTUBE_MIN_COMMENTS", 10))
+    youtube_last_n_days = int(os.environ.get("YOUTUBE_LAST_N_DAYS", 365))
+    youtube_overwrite_files = os.environ.get("YOUTUBE_OVERWRITE_FILES", "True") == "True"
+
     # storage
     storage_type = os.environ.get("STORAGE_TYPE", "local")
     raw_files_dir = os.environ.get("RAW_FILES_DIR", "data/raw")
@@ -44,4 +50,10 @@ class Settings:
     model_files_dir = os.environ.get("MODEL_FILES_DIR", "data/models")
 
     use_test_data: bool = os.environ.get("USE_TEST_DATA", "True") == "True"
+
+    # YouTube settings
+    min_youtube_views: int = 1000
+    min_youtube_comments: int = 10
+    max_youtube_results: int = 10
+    youtube_last_n_days: int = 365
 
