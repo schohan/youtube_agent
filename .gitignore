@@ -5,6 +5,6 @@ data/processed/
 **/logs
 venv/
 .venv/
-app.log
+app.log*
 .langgraph_*
 .DS_Store
