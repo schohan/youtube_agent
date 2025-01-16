@@ -11,6 +11,8 @@ import logging
 from app.shared.content.youtube_search import VideoStats
 from tenacity import retry, stop_after_delay, stop_after_attempt, wait_exponential
 import asyncio
+
+
 class YoutubeAgent:
 
     def __init__(self, storage_type: str = Settings.storage_type):
@@ -24,7 +26,7 @@ class YoutubeAgent:
 
 
     @retry(stop=(stop_after_delay(10) | stop_after_attempt(3)), wait=wait_exponential(multiplier=1, min=4, max=15))
-    async def download_youtube_videos(self, search_term: str):
+    async def download_youtube_videos(self, search_term: str) -> list[VideoStats]:
         """
         Get youtube videos based on a query
 
@@ -45,7 +47,7 @@ class YoutubeAgent:
 
 
 
-    async def download_youtube_videos_for_keywords(self, keywords: dict[str, str]):
+    async def download_youtube_videos_for_keywords(self, keywords: dict[str, str]) -> list[VideoStats]:
         """
         Get youtube videos based on a list of keywords
 
@@ -56,6 +58,7 @@ class YoutubeAgent:
         Returns:
             results (list): A list of dictionaries with video details
         """
+        videos:list[VideoStats] = []
         for k,v in keywords.items():
            self.logger.info(f"Downloading videos for {v}")
 
@@ -65,7 +68,7 @@ class YoutubeAgent:
                    self.logger.info(f"File already exists for {k}")
                    continue
                
-               videos:list[VideoStats] = await self.download_youtube_videos(v)
+               videos = await self.download_youtube_videos(v)
                if videos:
                    self.logger.info(f"Downloaded {len(videos)} videos and saving to {self.storage_dir}/videos_{k}.json")
                    self.youtube_searcher.save_to_json(videos, f"{self.storage_dir}/videos_{k}.json")
@@ -75,10 +78,10 @@ class YoutubeAgent:
                await asyncio.sleep(1)
            except Exception as e:
                self.logger.error(f"Error downloading videos for {k}: {type(e).__name__} - {e}")
+        return videos
 
 
-
-    async def download_youtube_videos_for_ontology(self, ontology: TopicOntology):
+    async def download_youtube_videos_for_ontology(self, ontology: TopicOntology, input: str):
         """
         Get youtube videos based on a ontology
         
@@ -89,5 +92,26 @@ class YoutubeAgent:
         Returns:
             results (list): A list of dictionaries with video details
         """
+        keywords = ontology.get_keywords(input)
+        return await self.download_youtube_videos_for_keywords(keywords)
+    
+
+    def load_videos_from_files(self, input: str) -> list[VideoStats]:
+        """
+        Load videos from files
+
+        Args:
+            input (str): The input to search for. This is the suffix in the ontology file. 
+            E.g. For input "machine learning" the ontology file is "ontology_machine learning.json"
+            and the videos file is "videos_<leaf topics>.json"
+        Returns:
+            videos (list): A list of dictionaries with video details
+        """
+        # load ontology
+        ontology = TopicOntology.load_ontology(f"{self.storage_dir}/ontology_{input}.json", self.storage)
         keywords = ontology.get_keywords()
-        await self.download_youtube_videos_for_keywords(keywords)
+
+
+        videos = self.youtube_searcher.load_youtube_videos_from_files(keywords)
+        return videos
+    

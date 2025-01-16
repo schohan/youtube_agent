@@ -32,14 +32,14 @@ def test_set():
 def test_has_item():
     test_files_dir = test_files_dir = os.path.join(Settings.project_root, Settings.test_files_dir)      
     storage = StorageFactory.get_storage("local", test_files_dir)
-    assert storage.has_item("youtube-result-single.json"), "Expected file to exist in storage"
+    assert storage.has_item("youtube_result_single.json"), "Expected file to exist in storage"
     logger.info("File exists in storage")
 
 
 def test_get():
     test_files_dir = test_files_dir = os.path.join(Settings.project_root, Settings.test_files_dir)      
     storage = StorageFactory.get_storage("local", test_files_dir)
-    data_str = storage.get("youtube-result-single.json")
+    data_str = storage.get("youtube_result_single.json")
     print(data_str)
     
     try:

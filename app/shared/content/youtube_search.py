@@ -10,6 +10,9 @@ from app.configs.settings import Settings
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled
 import json
 import asyncio
+from app.shared.storage.storage_factory import StorageFactory
+from app.shared.storage.file_storage import FileStorage
+from app.shared.storage.s3_storage import S3Storage
 
 @dataclass
 class VideoStats:
@@ -28,10 +31,13 @@ class VideoStats:
 
 
 class YouTubeSearcher:
-    def __init__(self, api_key: str):
+
+    def __init__(self, api_key: str, storage: FileStorage | S3Storage ):
         """Initialize YouTube API client."""
         self.youtube = build('youtube', 'v3', developerKey=api_key)
         self.logger = logging.getLogger(__name__)
+        self.storage = storage
+
 
     async def search_videos(
         self,
@@ -96,15 +102,32 @@ class YouTubeSearcher:
     def save_to_json(self, videos: list[VideoStats], path: str):
         """Save video details to JSON file."""
         try:
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            with open(path, 'w', encoding='utf-8') as f:
-                videos_data = [
-                    {**video.__dict__,'published_at': video.published_at.isoformat()} for video in videos
-                ]
-                json.dump(videos_data, f, ensure_ascii=True, indent=2)
+            # os.makedirs(os.path.dirname(path), exist_ok=True)
+            # with open(path, 'w', encoding='utf-8') as f:
+            videos_data = [
+                {**video.__dict__,'published_at': video.published_at.isoformat()} for video in videos
+            ]
+            json_str = json.dumps(videos_data, ensure_ascii=True, indent=2)
+            self.storage.set(path, json_str)
         except Exception as e:
             self.logger.error(f"Error saving to JSON: {str(e)}")        
 
+
+
+    def load_youtube_videos_from_files(self, keywords: dict[str, str]) -> list[VideoStats]:
+        """Load youtube videos from files"""
+        videos = [] 
+
+        for keyword, topic in keywords.items():
+            # with open(f"data/raw/videos_{keyword}.json", 'r', encoding='utf-8') as f:
+            #     videos.extend([VideoStats(**video) for video in json.load(f)])
+            # json_str = self.storage.get(f"data/raw/videos_{keyword}.json")
+            json_str = self.storage.get(f"videos_{keyword}.json")
+            if json_str is None:
+                raise ValueError(f"No videos found for keyword: {keyword}")
+            videos.extend([VideoStats(**video) for video in json.loads(json_str)])
+
+        return videos
 
 
 
@@ -208,7 +231,8 @@ async def main():
     if not api_key:
         raise ValueError("Please set YOUTUBE_API_KEY environment variable")
     
-    searcher = YouTubeSearcher(api_key)
+    storage = StorageFactory.get_storage(Settings.storage_type, Settings.raw_files_dir)
+    searcher = YouTubeSearcher(api_key, storage)
     
     # Search parameters
     search_term = input("Enter your topic for video extraction: ")  

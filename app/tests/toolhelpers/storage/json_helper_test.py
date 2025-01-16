@@ -37,7 +37,7 @@ def test_list_to_json():
 def test_to_json():
     logger.info("Running test_to_json")
     # load data/raw/videos_single_record.json
-    with open('data/raw/videos_single_record.json', 'r') as file:
+    with open('data/test/youtube_result_single.json', 'r') as file:
         videos = json.load(file)
 
         for video in videos:

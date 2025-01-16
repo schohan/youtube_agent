@@ -8,8 +8,9 @@ from app.configs.settings import Settings
 from app.agents.ontology.researched_state import ResearchedState
 from app.agents.ontology.topic_ontology import TopicNode, TopicOntology
 from app.shared.llm.llm_factory import LLMFactory
+from app.prompts.ontology_prompts import ontology_create_system_prompt, ontology_create_user_prompt, ontology_review_system_prompt, ontology_review_user_prompt
 
-
+# Example ontology
 # Web Development
 # ├── Frontend Development
 # │   ├── HTML & CSS Basics
@@ -37,12 +38,6 @@ class OntologyAgent(BaseAgent):
 
     def __init__(self, settings: Settings, tools: list[str]):
         self.settings = settings
-        self.model =  settings.openai_model_name 
-        self.model_api_key = settings.openai_api_key
-        self.editor_model = settings.claude_model_name
-        self.editor_api_key = settings.claude_api_key
-        self.tools = tools
-
 
 
     async def initialize(self):
@@ -57,14 +52,13 @@ class OntologyAgent(BaseAgent):
         """Extract relevant keywords for a given topic using LLM."""
         
         messages = [
-            {"role": "system", "content": f"You are a content editor who understands '{topic}' and how to build curriculum for it. Create a detailed mind map for '{topic}'. Include main branches, sub-branches, and key concepts or ideas for each."}, 
-            {"role": "user", "content":  f"topic is: {topic}" }]
+            {"role": "system", "content": ontology_create_system_prompt.format(topic=topic)}, 
+            {"role": "user", "content":  ontology_create_user_prompt.format(topic=topic) }]
         
-        print(f"Prompt ==>> {messages}")
-
+        self.logger.info(f"Prompt for creating ontology => {messages}")
 
         try:
-            llm = LLMFactory.get_llm(Settings.llm_openai)
+            llm = LLMFactory.get_llm(Settings.ontology_llm)
             structured_llm = llm.with_structured_output(schema=TopicOntology)
 
             response = structured_llm.invoke(messages)    
@@ -133,7 +127,7 @@ class OntologyAgent(BaseAgent):
                     error=f"No keywords found for topic {input}",
                     ontology=curriculum,
                     input=input,
-                    is_reviewed=False
+                    ontology_approved=False
                 )
 
             return ResearchedState(
@@ -141,7 +135,7 @@ class OntologyAgent(BaseAgent):
                     error="",
                     ontology=curriculum,
                     input=input,
-                    is_reviewed=False
+                    ontology_approved=False
                 )
 
         except Exception as e:
@@ -151,5 +145,5 @@ class OntologyAgent(BaseAgent):
                 error=str(e),
                 ontology=TopicOntology(title="", description="", topics=[]),
                 input=input,
-                is_reviewed=False
+                ontology_approved=False
             )

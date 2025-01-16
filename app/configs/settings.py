@@ -34,6 +34,9 @@ class Settings:
     openai_api_key = os.environ.get("OPENAI_API_KEY", "")
     tavily_api_key = os.environ.get("TAVILY_API_KEY", "")
 
+    # ontology related props
+    ontology_llm = llm_openai
+
     # youtube related props
     youtube_api_key = os.environ.get("YOUTUBE_API_KEY", "")
     youtube_max_results = int(os.environ.get("YOUTUBE_MAX_RESULTS", 10))

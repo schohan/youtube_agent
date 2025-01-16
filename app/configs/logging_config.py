@@ -1,6 +1,7 @@
 import logging
 import logging.config
 
+
 # Define the logging configuration
 LOGGING_CONFIG = {
     'version': 1,
@@ -28,7 +29,7 @@ LOGGING_CONFIG = {
     'loggers': {
         '': {
             'handlers': ['console', 'file'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True
         },
     }
