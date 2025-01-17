@@ -1,4 +1,4 @@
-from app.shared.storage.storage_interface import Storage
+from app.common.storage.storage_interface import Storage
 from app.configs.settings import Settings
 from app.configs.logging_config import get_logger
 

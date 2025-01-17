@@ -1,5 +1,5 @@
 from attr import dataclass
-from app.shared.data_converters.json_helper import JsonHelper
+from app.common.data_converters.json_helper import JsonHelper
 from app.configs.logging_config import get_logger
 import json
 logger = get_logger(__name__)

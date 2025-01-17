@@ -1,4 +1,4 @@
-from app.shared.llm.llm_interface import LLM
+from app.common.llm.llm_interface import LLM
 from typing import Any
 
 from langchain_openai import ChatOpenAI

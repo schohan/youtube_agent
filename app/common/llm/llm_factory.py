@@ -1,5 +1,5 @@
 from app.configs.settings import Settings
-
+from langchain_openai import ChatOpenAI
 
 class LLMFactory:
     """
@@ -7,7 +7,7 @@ class LLMFactory:
     """
 
     @staticmethod
-    def get_llm(llm: str):
+    def get_llm(llm: str) -> ChatOpenAI:
         """
         Factory method to get LLM instance based on model name
 

@@ -1,5 +1,5 @@
-from app.shared.storage.file_storage import FileStorage
-from app.shared.storage.s3_storage import S3Storage
+from app.common.storage.file_storage import FileStorage
+from app.common.storage.s3_storage import S3Storage
 from app.configs.settings import Settings
 
 class StorageFactory:

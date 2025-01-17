@@ -1,7 +1,7 @@
 from logging import getLogger
 
 from sqlalchemy import exists
-from app.shared.storage.storage_interface import Storage
+from app.common.storage.storage_interface import Storage
 from app.configs.settings import Settings
 import os
 from app.configs.logging_config import get_logger

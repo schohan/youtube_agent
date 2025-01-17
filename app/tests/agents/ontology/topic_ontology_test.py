@@ -6,8 +6,8 @@ from app.configs.logging_config import get_logger
 from app.configs.settings import Settings
 from app.agents.ontology.topic_ontology import TopicNode, TopicOntology
 import json
-from app.shared.storage.storage_factory import StorageFactory
-from app.shared.storage.file_storage import FileStorage
+from app.common.storage.storage_factory import StorageFactory
+from app.common.storage.file_storage import FileStorage
 
 # Ensure the PYTHONPATH environment variable is set to the parent directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))

@@ -35,7 +35,7 @@ class Settings:
     tavily_api_key = os.environ.get("TAVILY_API_KEY", "")
 
     # ontology related props
-    ontology_llm = llm_openai
+    ontology_llm = os.environ.get("ONTOLOGY_LLM", llm_openai)
 
     # youtube related props
     youtube_api_key = os.environ.get("YOUTUBE_API_KEY", "")
@@ -44,6 +44,9 @@ class Settings:
     youtube_min_comments = int(os.environ.get("YOUTUBE_MIN_COMMENTS", 10))
     youtube_last_n_days = int(os.environ.get("YOUTUBE_LAST_N_DAYS", 365))
     youtube_overwrite_files = os.environ.get("YOUTUBE_OVERWRITE_FILES", "True") == "True"
+
+    # summarizer related props
+    summarizer_llm = os.environ.get("SUMMARIZER_LLM", llm_openai)
 
     # storage
     storage_type = os.environ.get("STORAGE_TYPE", "local")

@@ -1,20 +1,13 @@
 import os
 from dotenv import load_dotenv
 import sys
-from app.shared.content.youtube_search import YouTubeSearcher
-# Ensure the PYTHONPATH environment variable is set to the parent directory
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
-# Load environment variables from .env file
-load_dotenv()
-
+from app.common.content.youtube_search import YouTubeSearcher, VideoStats
 from app.configs.settings import Settings
 from app.configs.logging_config import get_logger
-from app.shared.content.youtube_search import YouTubeSearcher
-from app.shared.storage.file_storage import FileStorage
-from app.shared.storage.storage_interface import Storage
-from app.shared.storage.storage_factory import StorageFactory
-from app.shared.data_converters.json_helper import JsonHelper
-from app.shared.content.youtube_search import VideoStats
+from app.common.storage.file_storage import FileStorage
+from app.common.storage.storage_interface import Storage
+from app.common.storage.storage_factory import StorageFactory
+from app.common.data_converters.json_helper import JsonHelper
 
 # Create a logger
 logger = get_logger(__name__)

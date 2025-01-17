@@ -1,7 +1,7 @@
-from app.shared.storage.file_storage import FileStorage
+from app.common.storage.file_storage import FileStorage
 from app.configs.settings import Settings
 from app.configs.logging_config import get_logger
-from app.shared.storage.storage_factory import StorageFactory
+from app.common.storage.storage_factory import StorageFactory
 import os
 import json
 

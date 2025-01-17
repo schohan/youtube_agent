@@ -9,7 +9,7 @@ import uuid
 import os
 from app.configs.settings import Settings
 from langchain_core.runnables import RunnableConfig
-from app.shared.content.youtube_search import VideoStats
+from app.common.content.youtube_search import VideoStats
 from app.agents.ontology.topic_ontology import TopicNode, TopicOntology
 from app.agents.youtube.youtube_agent import YoutubeAgent
 from langgraph.checkpoint.memory import MemorySaver
@@ -18,7 +18,7 @@ import logging
 from typing import Literal
 from langgraph.types import Command
 
-from app.shared.storage.storage_factory import StorageFactory
+from app.common.storage.storage_factory import StorageFactory
 
 
 # override settings for testing if needed

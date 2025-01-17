@@ -7,8 +7,8 @@ from app.agents.base import BaseAgent
 from app.configs.settings import Settings
 from app.agents.ontology.researched_state import ResearchedState
 from app.agents.ontology.topic_ontology import TopicNode, TopicOntology
-from app.shared.llm.llm_factory import LLMFactory
-from app.prompts.ontology_prompts import ontology_create_system_prompt, ontology_create_user_prompt, ontology_review_system_prompt, ontology_review_user_prompt
+from app.common.llm.llm_factory import LLMFactory
+from app.prompts.ontology_prompts import get_ontology_create_prompt
 
 # Example ontology
 # Web Development
@@ -51,10 +51,7 @@ class OntologyAgent(BaseAgent):
     async def _make_ontology(self, topic: str) -> Any:
         """Extract relevant keywords for a given topic using LLM."""
         
-        messages = [
-            {"role": "system", "content": ontology_create_system_prompt.format(topic=topic)}, 
-            {"role": "user", "content":  ontology_create_user_prompt.format(topic=topic) }]
-        
+        messages = get_ontology_create_prompt(topic)
         self.logger.info(f"Prompt for creating ontology => {messages}")
 
         try:

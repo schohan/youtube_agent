@@ -10,9 +10,9 @@ from app.configs.settings import Settings
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled
 import json
 import asyncio
-from app.shared.storage.storage_factory import StorageFactory
-from app.shared.storage.file_storage import FileStorage
-from app.shared.storage.s3_storage import S3Storage
+from app.common.storage.storage_factory import StorageFactory
+from app.common.storage.file_storage import FileStorage
+from app.common.storage.s3_storage import S3Storage
 
 @dataclass
 class VideoStats:
@@ -85,7 +85,7 @@ class YouTubeSearcher:
             self.logger.info(f"Before filtering, found {len(video_ids)} videos for query: {query}")
 
             # Get detailed video statistics
-            return self._get_filtered_video_stats(
+            return self.get_video_stats(
                 video_ids,
                 min_views,
                 min_comments
@@ -144,7 +144,7 @@ class YouTubeSearcher:
             return ""            
 
 
-    def _get_filtered_video_stats(
+    def get_video_stats(
         self,
         video_ids: List[str],
         min_views: Optional[int],
@@ -250,7 +250,7 @@ async def main():
         )
         
         # save to json
-        searcher.save_to_json(videos, f"data/raw/videos_{search_term}.json")
+        searcher.save_to_json(videos, f"videos_{search_term}.json")
 
         # Print results
         print(f"\nTop videos for '{search_term}':")
