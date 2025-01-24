@@ -4,12 +4,12 @@ from fastapi.responses import RedirectResponse
 from langserve import add_routes
 from dotenv import load_dotenv
 from app.workflows import ontology_creation_workflow
-from scripts.add_root import add_project_root_to_sys_path
-from app.workflows.ontology_creation_workflow import main as agent_creation_workflow
+#from scripts.add_root import add_project_root_to_sys_path
+from app.workflows.ontology_creation_workflow import run_workflow
 
 #load env variables from .evn file
 load_dotenv()
-add_project_root_to_sys_path()
+#add_project_root_to_sys_path()
 
 app = FastAPI()
 
@@ -24,9 +24,10 @@ async def redirect_root_to_docs():
     return RedirectResponse("/docs")
 
 
-@app.get("/build_agent")
-async def check(topic_category: str):
-    resp = await agent_creation_workflow()
+@app.get("/run_agent")
+async def run_agent(topic_category: str):
+    print(f"topic_category==>>> {topic_category}")
+    resp = await run_workflow(topic_category)
     return {"messages": resp}
 
 

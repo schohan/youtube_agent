@@ -108,6 +108,7 @@ class YouTubeSearcher:
                 {**video.__dict__,'published_at': video.published_at.isoformat()} for video in videos
             ]
             json_str = json.dumps(videos_data, ensure_ascii=True, indent=2)
+            self.logger.info(f"Saving to JSON: {json_str}")
             self.storage.set(path, json_str)
         except Exception as e:
             self.logger.error(f"Error saving to JSON: {str(e)}")        
@@ -221,7 +222,9 @@ def format_number(num: int) -> str:
     return str(num)
 
 
+################################################################################
 # Example usage
+################################################################################
 async def main():
     # Set up logging
     logging.basicConfig(level=logging.INFO)

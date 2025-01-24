@@ -41,10 +41,10 @@ async def create_ontology_node(state: ResearchedState) -> ResearchedState:
     logger.info(f"ontology_node: Executing keyword node with inputs==>>>  {state.to_json()}")
     
     
-    ontology_file = f"{settings.raw_files_dir}/ontology_{state.input}.json"
+    ontology_file = f"ontology_{state.input}.json"
 
     # check if the ontology is already created
-    if not overwrite_ontology or storage.has_item(ontology_file):
+    if not overwrite_ontology and storage.has_item(ontology_file):
         logger.info(f"ontology_node: Ontology already created. Loading ontology from file.")
         #state.ontology = TopicOntology.load_ontology(ontology_file, storage)
         loaded_ontology = TopicOntology.load_ontology(storage.get(ontology_file))
@@ -52,17 +52,16 @@ async def create_ontology_node(state: ResearchedState) -> ResearchedState:
             raise ValueError("Failed to load ontology from storage")
         state.ontology = loaded_ontology
         return state
-
+   
+    # ontology is not created, create it
     agent = OntologyAgent(settings, [])
     res = await agent.execute(state.input)
-
     logger.info(f"ontology_node: Ontology extraction result==>>> {res}")
-
     # save the ontology to a json file
-    #res.ontology.save_to_json(ontology_file)
-    storage.set(ontology_file, res.ontology.to_json_str())
+    res.ontology.save_to_json(ontology_file, storage)
     return res
    
+
 
 async def ontology_feedback_node(state: ResearchedState) -> str:
     """
@@ -96,7 +95,6 @@ async def ontology_feedback_node(state: ResearchedState) -> str:
         return REGENERATE_ONTOLOGY
     
 
-
 async def youtube_stats_node(state: ResearchedState) -> ResearchedState:
     # state.ontology_approved = True # TODO: move this to Command object in feedback node
 
@@ -116,7 +114,6 @@ async def youtube_stats_node(state: ResearchedState) -> ResearchedState:
     logger.info(f"youtube_node: YouTube extraction result==>>> {videos}")
     state.videos=videos        
     return state
-
 
 
 async def test_node(state: ResearchedState) -> ResearchedState:
@@ -165,6 +162,7 @@ async def create_graph():
 
 
 
+
 async def create_test_graph():
     """
     This is a test graph for the ontology creation workflow. It is used to test the youtube fetching of limited videos
@@ -195,14 +193,10 @@ async def run_workflow(topic_category: str):
     # logger.info(f"main: state==>>> {state.to_json_str()}")
     res = await app.ainvoke(state, config=thread_config)
     return res
-
-
-async def main():
-    input_message = input("\n\nEnter a topic to build a mind map and extract videos for each topic in it: ")  
-    res = await run_workflow(input_message)
-    logger.info(f"main: state==>>> {res}")
+    
    
 if __name__ == "__main__": 
-    asyncio.run(main())
+    input_message = input("\n\nEnter a topic to build a mind map and extract videos for each topic in it: ")  
+    asyncio.run(run_workflow(input_message))
 
    

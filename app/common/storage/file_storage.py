@@ -65,12 +65,14 @@ class FileStorage(Storage):
         file_path = os.path.join(self.directory, key)
         self.logger.info(f"Getting file {file_path} ")
 
-        if not os.path.isfile(file_path):
+        if not self.has_item(key):
             raise FileNotFoundError(f"The file {key} does not exist in the directory {self.directory}")
         
         with open(file_path, 'r') as file:
             return file.read()
     
+
+
     # overrides the set method in the Storage class
     def set(self, key: str, value: str):
         """
@@ -129,3 +131,15 @@ class FileStorage(Storage):
                     content = f.read()
                     processor_func(content)  
     
+
+##########################
+#  EXAMPLE USAGE 
+##########################
+
+if __name__ == "__main__":
+    storage = FileStorage("data/raw")
+    print(storage.has_item("test.txt"))
+    storage.set("test.txt", "Hello, World!")
+    print(storage.get("test.txt"))
+    # storage.delete("test.txt")
+    # print(storage.has_item("test.txt"))

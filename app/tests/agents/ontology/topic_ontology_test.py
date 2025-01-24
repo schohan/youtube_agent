@@ -99,7 +99,6 @@ def test_load_curriculum_ontology_nested_structure():
     mental_health_topics = {child.title for child in mental_health.children}
     assert "Stress Management" in mental_health_topics
 
-
 def test_load_curriculum_ontology_first_level_categories2():
     """Test that all expected top-level categories exist in the curriculum"""
     ontology_file = 'health-ontology.json'
@@ -117,3 +116,16 @@ def test_load_curriculum_ontology_first_level_categories2():
         "Occupational Health"
     }
     assert first_level == expected_categories
+
+def test_get_keywords():
+    ontology_file = 'health-ontology.json'
+    ontology_json = storage.get(ontology_file)
+    curriculum_data = TopicOntology.load_ontology(ontology_json)
+    assert curriculum_data is not None
+
+    keywords = curriculum_data.get_keywords("health")
+    #print(f"Keywords==>> {keywords}")
+    assert keywords is not None
+    assert "health-physical health-exercise-cardiovascular" in keywords
+    assert "health-physical health-exercise-strength training" in keywords
+    assert "health-physical health-exercise-flexibility" in keywords

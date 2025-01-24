@@ -1,14 +1,14 @@
 from typing import final
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph, START, END
-from app.shared.content.youtube_search import YouTubeSearcher
+from app.common.content.youtube_search import YouTubeSearcher
 from app.configs.settings import Settings
 from datetime import datetime, timedelta
 from app.agents.ontology.topic_ontology import TopicOntology
-from app.shared.data_converters.json_helper import JsonHelper
-from app.shared.storage.storage_factory import StorageFactory
+from app.common.data_converters.json_helper import JsonHelper
+from app.common.storage.storage_factory import StorageFactory
 import logging
-from app.shared.content.youtube_search import VideoStats
+from app.common.content.youtube_search import VideoStats
 from tenacity import retry, stop_after_delay, stop_after_attempt, wait_exponential
 import asyncio
 
@@ -17,8 +17,8 @@ class YoutubeAgent:
 
     def __init__(self, storage_type: str = Settings.storage_type):
         self.storage_dir = Settings.raw_files_dir
-        self.youtube_searcher = YouTubeSearcher(Settings.youtube_api_key)
         self.storage = StorageFactory.get_storage(storage_type, self.storage_dir)
+        self.youtube_searcher = YouTubeSearcher(Settings.youtube_api_key, storage=self.storage)
         self.min_views = Settings.youtube_min_views
         self.min_comments = Settings.youtube_min_comments
         self.last_n_days = Settings.youtube_last_n_days
@@ -45,8 +45,6 @@ class YoutubeAgent:
 
    
 
-
-
     async def download_youtube_videos_for_keywords(self, keywords: dict[str, str]) -> list[VideoStats]:
         """
         Get youtube videos based on a list of keywords
@@ -59,9 +57,14 @@ class YoutubeAgent:
             results (list): A list of dictionaries with video details
         """
         videos:list[VideoStats] = []
-        for k,v in keywords.items():
-           self.logger.info(f"Downloading videos for {v}")
+        kw_objects = keywords.items()
 
+        self.logger.info(f"Downloading videos for {len(kw_objects)} keywords")
+        self.logger.info(f"Keywords: {kw_objects}")
+
+        # download videos for each keyword
+        for k,v in kw_objects:
+           self.logger.info(f"Downloading videos for {v} using key:{k}")
            try:
                # check if the file exists
                if self.storage.has_item(f"videos_{k}.json") and not Settings.youtube_overwrite_files:
@@ -71,7 +74,7 @@ class YoutubeAgent:
                videos = await self.download_youtube_videos(v)
                if videos:
                    self.logger.info(f"Downloaded {len(videos)} videos and saving to {self.storage_dir}/videos_{k}.json")
-                   self.youtube_searcher.save_to_json(videos, f"{self.storage_dir}/videos_{k}.json")
+                   self.youtube_searcher.save_to_json(videos, f"videos_{k}.json")
                else:
                    self.logger.error(f"No videos found for {k}")
                # pause for 1 second
@@ -92,11 +95,14 @@ class YoutubeAgent:
         Returns:
             results (list): A list of dictionaries with video details
         """
+        #self.logger.info(f"Downloading videos for ontology: {ontology.to_json()}")
+        self.logger.info(f"download_youtube_videos_for_ontology: Input: {input}")
+
         keywords = ontology.get_keywords(input)
         return await self.download_youtube_videos_for_keywords(keywords)
     
 
-    def load_videos_from_files(self, input: str) -> list[VideoStats]:
+    def load_videos_from_files(self, input: str = "") -> list[VideoStats]:
         """
         Load videos from files
 
@@ -108,8 +114,10 @@ class YoutubeAgent:
             videos (list): A list of dictionaries with video details
         """
         # load ontology
-        ontology = TopicOntology.load_ontology(f"{self.storage_dir}/ontology_{input}.json", self.storage)
-        keywords = ontology.get_keywords()
+        ontology = TopicOntology.load_ontology(f"{self.storage_dir}/ontology_{input}.json")
+        if not ontology:
+            raise FileNotFoundError(f"Could not load ontology file for input: {input}")
+        keywords = ontology.get_keywords(input)
 
 
         videos = self.youtube_searcher.load_youtube_videos_from_files(keywords)

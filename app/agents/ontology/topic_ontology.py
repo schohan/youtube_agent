@@ -2,6 +2,11 @@ from pydantic import BaseModel
 from typing import Optional
 from pydantic import Field
 import json
+from app.common.storage.file_storage import FileStorage
+from app.common.storage.s3_storage import S3Storage
+import logging
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 class TopicNode(BaseModel):
     """
@@ -9,7 +14,6 @@ class TopicNode(BaseModel):
     """
     title: str = Field(..., description="The title of the topic")
     children: list['TopicNode'] = Field(..., description="The children of the topic")
-    
 
     def to_dict(self):
         return {
@@ -36,10 +40,16 @@ class TopicOntology(BaseModel):
         }
     
 
-    def save_to_json(self, file_path: str):
+    def save_to_json(self, file_path: str, storage: FileStorage | S3Storage):
         """Save the ontology to a JSON file."""
-        with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(self.to_dict(), f, ensure_ascii=True, indent=2)
+        try:
+            # os.makedirs(os.path.dirname(path), exist_ok=True)
+            # with open(path, 'w', encoding='utf-8') as f:
+            data = self.to_dict()
+            json_str = json.dumps(data, ensure_ascii=True, indent=2)            
+            storage.set(file_path, json_str)
+        except Exception as e:
+            logger.error(f"Error saving to JSON: {str(e)}")
 
 
     def to_json(self):
@@ -95,7 +105,8 @@ class TopicOntology(BaseModel):
             
             if not node.children:  # Leaf node
                 # Create key by joining the path with hyphens
-                key = input.join("-".join(current_path)).lower()
+                print(f"Current path: {current_path}, input: {input}")
+                key = input + "-" + ("-".join(current_path).lower())
                 # Create value by combining current node title with parent title
                 value = f"{parent_title} {node.title}".strip().lower()
                 keywords[key] = value

@@ -1,22 +1,32 @@
 FROM python:3.11-slim
 
 RUN pip install poetry==1.6.1
-
 RUN poetry config virtualenvs.create false
 
-WORKDIR /code
 
-COPY ./pyproject.toml ./README.md ./poetry.lock* ./
+# create volumes
+RUN mkdir -p /app/logs
+RUN mkdir -p /app/data/raw
+RUN mkdir -p /app/data/processed
+RUN mkdir -p /app/data/test
+RUN mkdir -p /app/data/models
+RUN mkdir -p /app/data/models/llm
+RUN mkdir -p /app/data/models/summarizer
 
-COPY ./package[s] ./packages
+# add new user
+# ARG USER=mediauser
+# RUN adduser --disabled-password --gecos "" $USER 
+# USER $USER
 
-RUN poetry install  --no-interaction --no-ansi --no-root
+WORKDIR /app
 
-COPY ./youtube_agent ./youtube_agent
+COPY ./pyproject.toml ./poetry.lock* ./README.md ./
+COPY ./app ./app
 
-RUN poetry install --no-interaction --no-ansi
+RUN poetry install  --no-interaction --no-ansi
 
-EXPOSE 8080
+ENV PORT=${PORT:-8080}
+EXPOSE ${PORT}
 
-CMD exec uvicorn youtube_agent.api.server:app --host 0.0.0.0 --port 8080
+CMD ["poetry", "run", "uvicorn", "app.api.server:app", "--host", "0.0.0.0", "--port", "8080"]
 
