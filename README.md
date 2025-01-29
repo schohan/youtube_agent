@@ -3,7 +3,7 @@
 
 ## Overview
 
-This AI agent is a TL;DR (or Too Long;Did't Watch ) helper for Youtube videos that can aid learning about a topic without having to find, filter, and watch unnecessary videos.
+This AI agent is a TL;DR helper for Youtube videos that can aid learning about a topic without having to find, filter, and watch unnecessary videos.
 
 Even though you can search Youtube to find relevant videos, it is still difficult to know which videos are the most relevant by just looking at the thumbnail and titles of the videos. 
 
