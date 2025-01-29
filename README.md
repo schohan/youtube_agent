@@ -1,7 +1,6 @@
 # Youtube Agent with Topic Ontology
 > NOTE: This code is for proof of concept and is not meant for use in production environment.
 
-
 ## Overview
 
 This AI agent is a TL;DR (or Too Long;Did't Watch ) helper for Youtube videos that can aid learning about a topic without having to find, filter, and watch unnecessary videos.
@@ -12,11 +11,17 @@ This agent helps to not only find the most relevant videos for a given topic but
 
 Applications built on top of this agent can help pinpoint the videos relevant to your needs. 
 
+
 ### How it works
 
 1. User inputs a top level category. E.g. "Machine Learning"
 
 2. Agent creates a curriculum (ontology), a mind-map of sorts, with relevant sub-categories and topics
+
+Graphical representation of the workflow:
+![Ontology](./docs/agent_flow_graph.png)
+
+Note: Ontology feedback is not yet connected to the agent.
 
 Example ontology:
 ```

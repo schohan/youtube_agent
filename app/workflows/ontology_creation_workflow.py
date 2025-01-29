@@ -9,7 +9,7 @@ import uuid
 import os
 from app.configs.settings import Settings
 from langchain_core.runnables import RunnableConfig
-from app.common.content.youtube_search import VideoStats
+from app.common.youtube.youtube_search import VideoStats
 from app.agents.ontology.topic_ontology import TopicNode, TopicOntology
 from app.agents.youtube.youtube_agent import YoutubeAgent
 from langgraph.checkpoint.memory import MemorySaver

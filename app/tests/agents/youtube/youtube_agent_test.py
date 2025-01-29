@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 import sys
-from app.common.content.youtube_search import YouTubeSearcher, VideoStats
+from app.common.youtube.youtube_search import YouTubeSearcher, VideoStats
 from app.configs.settings import Settings
 from app.configs.logging_config import get_logger
 from app.common.storage.file_storage import FileStorage

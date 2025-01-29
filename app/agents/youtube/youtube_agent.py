@@ -1,14 +1,14 @@
 from typing import final
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import StateGraph, START, END
-from app.common.content.youtube_search import YouTubeSearcher
+from app.common.youtube.youtube_search import YouTubeSearcher
 from app.configs.settings import Settings
 from datetime import datetime, timedelta
 from app.agents.ontology.topic_ontology import TopicOntology
 from app.common.data_converters.json_helper import JsonHelper
 from app.common.storage.storage_factory import StorageFactory
 import logging
-from app.common.content.youtube_search import VideoStats
+from app.common.youtube.youtube_search import VideoStats
 from tenacity import retry, stop_after_delay, stop_after_attempt, wait_exponential
 import asyncio
 

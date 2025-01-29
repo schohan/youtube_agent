@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 import json
 from .topic_ontology import TopicOntology
-from app.common.content.youtube_search import VideoStats
+from app.common.youtube.youtube_search import VideoStats
 from pydantic import Field
 
 

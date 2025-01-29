@@ -4,7 +4,7 @@ from typing_extensions import TypedDict
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from pydantic import BaseModel, Field
-from app.shared.content.youtube_search import VideoStats
+from app.common.youtube.youtube_search import VideoStats
 
 
 class TopicList(BaseModel):
